@@ -1,4 +1,4 @@
-from website import app
+from project import app
 
 app = app()
 
