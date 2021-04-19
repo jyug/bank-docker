@@ -14,7 +14,7 @@ class Checking_Account(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     check_money = db.Column(db.Integer(20))
 
-# Testing
+# Testing sss
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
