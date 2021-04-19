@@ -1,4 +1,4 @@
-from . import db
+from project import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
@@ -13,6 +13,7 @@ class Checking_Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     check_money = db.Column(db.Integer(20))
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
