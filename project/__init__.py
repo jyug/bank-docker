@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
+
 def app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hahahah'
