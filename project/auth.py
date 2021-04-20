@@ -1,4 +1,9 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from werkzeug.security import generate_password_hash
+from .models import User
+from . import db
+from flask_mysqldb import MySQL
+from . import create_app
 
 auth = Blueprint('auth', __name__)
 
@@ -34,6 +39,10 @@ def sign_up():
             flash('password should be longer!', category='error')
         else:
             # add user to database.
+            new_user = User(email=email, first_name=firstName, last_name=lastName, password=generate_password_hash(password2, method='sha256'))
+            db.session.add(new_user)
+            db.session.commit()
             flash('Account created', category='success')
+            return redirect(url_for('views.home'))
 
     return render_template('signUp.html')
