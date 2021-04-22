@@ -31,18 +31,21 @@
       </button>
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav">
+          {% if user.is_authenticated %}
           <li class="nav-item active">
           <a class="nav-item nav-link" id="home" href="/">Home</a>
           </li>
           <li class="nav-item active">
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           </li>
+          {% else %}
           <li class="nav-item active">
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           </li>
           <li class="nav-item active">
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
           </li>
+          {% endif %}
 
         </ul>
       </div>

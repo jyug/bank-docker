@@ -23,7 +23,7 @@ def login():
                 flash('Invalid password, please try again!', category='error')
         else:
             flash('Invalid email address, please try again!', category='error')
-    return render_template('login.html')
+    return render_template('login.html', user=current_user)
 
 
 @auth.route('/logout')
@@ -62,4 +62,4 @@ def sign_up():
             flash('Account created', category='success')
             return redirect(url_for('views.home'))
 
-    return render_template('signUp.html')
+    return render_template('signUp.html', user=current_user)
