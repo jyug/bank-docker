@@ -18,9 +18,17 @@
     <title>{% block title %}Home{% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-light bg-warning">
       <div class="container">
-        <a class="navbar-brand" href="#">13-Bank</a>
+
+        <a class="navbar-brand" href="#">
+          <img src="/static/pics/coin.png" width="100" height="100" alt="">
+        </a>
+        <a class="navbar-brand" href="#"><h1 style=" font-family:Impact, fantasy;">Super Coin Bank</h1></a>
+        <a class="navbar-brand" href="#">
+          <img src="/static/pics/coin.png" width="100" height="100" alt="">
+        </a>
+
       <button
         class="navbar-toggler"
         type="button"
@@ -29,29 +37,37 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar">
+      <div class="collapse navbar-collapse justify-content-end" id="navbar">
         <ul class="navbar-nav">
           {% if user.is_authenticated %}
           <li class="nav-item active">
-          <a class="nav-item nav-link" id="home" href="/">Home</a>
+          <a class="nav-item nav-link" id="home" href="/userinfo">
+            <img src="/static/pics/person_icon.png"  width="25" height="25" alt="">
+          </a>
           </li>
           <li class="nav-item active">
-          <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+          <a class="nav-item nav-link" id="logout" href="/logout" style="font-weight:bold">Logout</a>
           </li>
           {% else %}
           <li class="nav-item active">
-          <a class="nav-item nav-link" id="login" href="/login">Login</a>
+          <a class="nav-item nav-link" id="login" href="/login" style="font-weight:bold">Login</a>
           </li>
           <li class="nav-item active">
-          <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+          <a class="nav-item nav-link" id="signUp" href="/sign-up" style="font-weight:bold">Sign Up</a>
           </li>
           {% endif %}
-
         </ul>
       </div>
       </div>
     </nav>
 
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        {% block nav %}
+        {% endblock %}
+      </div>
+    </nav>
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %} {% if category ==
     'error' %}
@@ -69,8 +85,10 @@
       </button>
     </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
+    {% block content %}
+    {% endblock %}
 
-    <div class="container">{% block content %} {% endblock %}</div>
+
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
