@@ -52,10 +52,6 @@ def sign_up():
             flash('Email has already been taken!', category='error')
         elif len(email) < 4:
             flash('Email should be longer!', category='error')
-        elif len(firstName) < 2:
-            flash('First Name should be longer!', category='error')
-        elif len(lastName) < 2:
-            flash('Last Name should be longer!', category='error')
         elif password1 != password2:
             flash('Passwords not match', category='error')
         elif len(password1) < 7:

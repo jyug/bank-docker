@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     username = db.Column(db.String(150), unique=True)
+    address = db.Column(db.String(255))
 
 #
 #     def __init__(self, email, password, first_name, last_name):
