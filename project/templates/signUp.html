@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Sign Up{% endblock %}
+{%block nav%}
+<text style="font-weight:bold; color:white; font-size:20px">"It’s our business to know your business."</text>
+{% endblock %}
 {%block content%}
+<div class="container">
 <form method="POST">
     <h3 align="center">Sign Up</h3>
     <div class="form-group">
@@ -46,7 +50,7 @@
     <div class="form-group">
         <label for="password1">Password</label>
         <input
-                type="text"
+                type="password"
                 class="form-control"
                 id="password1"
                 name="password1"
@@ -56,7 +60,7 @@
     <div class="form-group">
         <label for="password2">Password(Confirm)</label>
         <input
-                type="text"
+                type="password"
                 class="form-control"
                 id="password2"
                 name="password2"
@@ -66,4 +70,5 @@
     <br />
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+</div>
 {% endblock %}
