@@ -4,16 +4,18 @@ from . import db
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
-
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        login_pass = request.form.get('loginpass')
         password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
+        if check_email_username(login_pass):
+            user = User.query.filter_by(username=login_pass).first()
+        else:
+            user = User.query.filter_by(email=login_pass).first()
         if user:
             if password == user.password:
                 flash('Welcome back ' + user.first_name + '!', category='success')
@@ -36,14 +38,19 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
+        username = request.form.get('username')
         email = request.form.get('email')
         firstName = request.form.get('firstName')
         lastName = request.form.get('lastName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-        # if not db.valid_email(email):
-        #     flash('Email has already been taken!', category='error')
-        if len(email) < 4:
+        u1 = User.query.filter_by(username=username).first()
+        u2 = User.query.filter_by(email=email).first()
+        if u1:
+            flash('Username has already been taken!', category='error')
+        elif u2:
+            flash('Email has already been taken!', category='error')
+        elif len(email) < 4:
             flash('Email should be longer!', category='error')
         elif len(firstName) < 2:
             flash('First Name should be longer!', category='error')
@@ -55,11 +62,23 @@ def sign_up():
             flash('password should be longer!', category='error')
         else:
             # add user to database.
-            new_user = User(last_name = lastName, first_name = firstName, email = email, password = password2)
+            new_user = User(last_name=lastName, first_name=firstName, email=email, password=password2, username=username)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('Account created', category='success')
+            flash('Account created! Welcome '+new_user.first_name + '!',  category='success')
             return redirect(url_for('views.home'))
 
     return render_template('signUp.html', user=current_user)
+
+
+def check_email_username(s):
+    c = 0
+    for i in range(len(s)):
+        if s[i] == '@':
+            c += 1
+        if s[i] == '.':
+            c += 1
+    if c >= 2:
+        return False
+    return True
