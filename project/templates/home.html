@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {%block nav%}
-<a class="navbar-brand" href="#">Good Day! {{user.first_name}}</a>
+<a class="navbar-brand" href="#">Good Day!
+  {% if user.last_name == None %}
+  {{ user.first_name  + '!'}}
+  {% else %}
+  {{user.first_name + ' ' + user.last_name + '!'}}
+  {% endif %}</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -10,8 +15,13 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav">
+          {% if user.id == 1 %}
+          <li class="nav-item active">
+          <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
+          </li>
           <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Accounts
@@ -30,8 +40,34 @@
           <a class="dropdown-item" href="#">Wire money</a>
         </div>
           </li>
+          {% else %}
+          <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Accounts
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Checking Account</a>
+          <a class="dropdown-item" href="#">Saving Account</a>
+        </div>
+          </li>
+            <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Pay & Transfer
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Internal transfer</a>
+          <a class="dropdown-item" href="#">Wire money</a>
+        </div>
+          </li>
+          {% endif %}
         </ul>
       </div>
 {% endblock %}
 {% block content%}
+{% if user.id == 1%}
+<p>god</p>
+{% else %}
+<p>Account</p>
+<p>news</p>
+{% endif %}
 {%endblock%}

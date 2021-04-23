@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from flask_login import current_user, login_required
 from . import db
+from sqlalchemy import select
 
 
 views = Blueprint('views', __name__)
@@ -14,11 +15,13 @@ def home():
 
 
 @views.route('/user_info', methods=['GET', 'POST'])
+@login_required
 def user_info():
     return render_template('user_info.html', user=current_user)
 
 
 @views.route('/edit_user_info', methods=['GET', 'POST'])
+@login_required
 def edit_user_info():
     if request.method == 'POST':
         firstName = request.form.get('firstName')
@@ -40,6 +43,22 @@ def edit_user_info():
         if len(address) > 0:
             current_user.address = address
         db.session.commit()
-        flash('Information changed! Welcome back '+current_user.first_name + '!',  category='success')
+        print(current_user.accounts)
+        flash('Information changed! Welcome back ' + current_user.first_name + '!', category='success')
         return redirect(url_for('views.user_info'))
     return render_template('edit_user_info.html', user=current_user)
+
+
+@views.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    users = User.query.all()
+    name_list = []
+    for user in users:
+        if user.last_name is None:
+            name_list.append(str(user.first_name))
+        elif user.first_name is None:
+            name_list.append(str(user.last_name))
+        else:
+            name_list.append(str(user.first_name) + ' ' + str(user.last_name))
+    return render_template('admin.html', user=current_user, list=name_list)

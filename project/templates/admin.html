@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block nav %}
+<text style="font-weight:bold; color:white; font-size:20px">Administration Section</text>
+{% endblock %}
+{% block content%}
+<div class="container">
+    <form method="POST">
+{% for name in list%}
+    <a style="font-weight:bold">
+        <p>{{name}}</p>
+        <button class="submit">s</button>
+    </a>
+{% endfor %}
+    </form>
+</div>
+{% endblock %}
