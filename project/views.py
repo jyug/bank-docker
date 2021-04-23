@@ -53,12 +53,12 @@ def edit_user_info():
 @login_required
 def admin():
     users = User.query.all()
-    name_list = []
+    user_dict = {}
     for user in users:
         if user.last_name is None:
-            name_list.append(str(user.first_name))
+            user_dict[user.id] = [user.email, user.username, user.first_name]
         elif user.first_name is None:
-            name_list.append(str(user.last_name))
+            user_dict[user.id] = [user.email, user.username, user.last_name]
         else:
-            name_list.append(str(user.first_name) + ' ' + str(user.last_name))
-    return render_template('admin.html', user=current_user, list=name_list)
+            user_dict[user.id] = [user.email, user.username, user.first_name, user.last_name]
+    return render_template('admin.html', user=current_user, dict=user_dict)

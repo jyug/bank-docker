@@ -6,11 +6,19 @@
 {% block content%}
 <div class="container">
     <form method="POST">
-{% for name in list%}
-    <a style="font-weight:bold">
-        <p>{{name}}</p>
-        <button class="submit">s</button>
-    </a>
+{% for k, v in dict.items()%}
+    <details>
+        <summary>{{ v[1] }} </summary>
+        <ul>
+            {% if v|length < 4 %}
+            <li>Name: {{ v[2] }}</li>
+            {% else %}
+            <li>Name: {{ v[2] + ' ' + v[3] }}</li>
+            {% endif %}
+            <li>Email: {{ v[0] }}</li>
+        </ul>
+    </details>
+
 {% endfor %}
     </form>
 </div>
