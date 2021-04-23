@@ -13,21 +13,29 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(150), unique=True)
     address = db.Column(db.String(255))
     accounts = db.relationship('Account')
-    receive_transaction = db.relationship('Transaction')
 
 
 class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(150))
-    transactions = db.relationship('Transaction')
     balance = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    payments = db.relationship('Payment')
+    incomes = db.relationship('Income')
 
 
-class Transaction(db.Model):
+class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    balance = db.Column(db.Float)
+    amount = db.Column(db.Float)
+    target_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     time = db.Column(db.DateTime, nullable=False,
                      default=datetime.utcnow)
-    from_account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
-    to_user = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+class Income(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float)
+    source_id = db.Column(db.Integer, db.ForeignKey('account.id'))
+    time = db.Column(db.DateTime, nullable=False,
+                     default=datetime.utcnow)
+
