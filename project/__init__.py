@@ -4,15 +4,9 @@ from os import path
 from flask_mysqldb import MySQL, MySQLdb
 from flask_login import LoginManager
 
-# import yaml
-
-
 db = SQLAlchemy()
-
 DB_NAME = "database.db"
 
-
-# db = yaml.load(open('db.yaml'))
 
 def create_app():
     app = Flask(__name__)
