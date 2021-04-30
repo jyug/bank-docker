@@ -67,7 +67,12 @@
 {% if user.id == 1%}
 <p>god</p>
 {% else %}
-<p>Account</p>
-<p>news</p>
+<div class="container">
+  <p>Account：</p>
+  {% for account in user.accounts %}
+  <p>{{account.type}}: ${{account.balance}}</p>
+  {% endfor %}
+  <p>news</p>
+</div>
 {% endif %}
 {%endblock%}
