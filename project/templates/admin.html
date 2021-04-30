@@ -45,11 +45,25 @@
                     {% if c.accounts|length == 0 %}
                     <td>Accounts: N/A</td>
                     {% else %}
-                    <td>Accounts: {{c.accounts}}</td>
+                    <td>Accounts:</td>
+                    {% for account in c.accounts %}
+                    <li>{{account.type}}: ${{account.balance}}</li>
+                    {% endfor %}
                     {% endif %}
                     </br>
                     <form method="POST" action="/account_management">
-                        <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>check account</button>
+                        <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
+                    </form>
+                    <br/>
+                    <p style="font-weight:bold">Close account for user</p>
+                    <form method="POST" action="/close_account">
+                          <input type="checkbox" id="checking" name="checking" value="checking">
+                          <label for="checking"> Checking Account</label><br>
+                          <input type="checkbox" id="saving" name="saving" value="saving">
+                          <label for="saving"> Saving Account </label><br>
+                          <input type="checkbox" id="credit" name="credit" value="credit">
+                          <label for="credit"> Credit Account </label><br><br>
+                        <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Close account</button>
                     </form>
                     </br>
                 </tr>
