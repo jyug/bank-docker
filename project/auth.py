@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from .models import User, Account, Payment
 from . import db
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
@@ -78,3 +78,100 @@ def check_email_username(s):
     if c >= 2:
         return False
     return True
+
+
+@auth.route('/user_info', methods=['GET', 'POST'])
+@login_required
+def user_info():
+    return render_template('user_info.html', user=current_user)
+
+
+@auth.route('/edit_user_info', methods=['GET', 'POST'])
+@login_required
+def edit_user_info():
+    if request.method == 'POST':
+        firstName = request.form.get('firstName')
+        lastName = request.form.get('lastName')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+        address = request.form.get('address')
+        if len(firstName) > 0:
+            current_user.first_name = firstName
+        if len(lastName) > 0:
+            current_user.last_name = lastName
+        if len(password1) > 0 and len(password2) > 0:
+            if len(password1) < 7:
+                flash('password should be longer!', category='error')
+            elif password1 != password2:
+                flash('Passwords not match', category='error')
+            else:
+                current_user.password = password2
+        if len(address) > 0:
+            current_user.address = address
+        db.session.commit()
+        print(current_user.accounts)
+        flash('Information changed! Welcome back ' + current_user.first_name + '!', category='success')
+        return redirect(url_for('auth.user_info'))
+    return render_template('edit_user_info.html', user=current_user)
+
+
+@auth.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    if request.method == 'POST':
+        users = User.query.all()
+        key = request.form.get('search')
+        field = request.form.get('field')
+        customers = []
+        found = 1
+        if field == 'firstName':
+            for user in users:
+                if user.first_name == key:
+                    customers.append(user)
+        if field == 'lastName':
+            for user in users:
+                if user.last_name == key:
+                    customers.append(user)
+        if field == 'email':
+            for user in users:
+                if user.email == key:
+                    customers.append(user)
+        if field == 'username':
+            for user in users:
+                if user.username == key:
+                    customers.append(user)
+        if len(customers) == 0:
+            found = 0
+        return render_template('admin.html', user=current_user, customers=customers, found=found)
+    return render_template('admin.html', user=current_user)
+
+
+@auth.route('/account_management', methods=['GET', 'POST'])
+@login_required
+def account_management():
+    if request.method == 'POST':
+        users = User.query.all()
+        userid = int(request.form.get('id'))
+        for u in users:
+            if u.id == userid:
+                return render_template('account_management.html', user=current_user, customer=u)
+    return 'Error'
+
+
+@auth.route('/open_account', methods=['GET', 'POST'])
+@login_required
+def open_account():
+    if request.method == 'POST':
+        users = User.query.all()
+        balance = request.form.get('balance')
+        account_type = request.form.get('type')
+        customer_id = int(request.form.get('customer_id'))
+        for user in users:
+            if user.id == customer_id:
+                new_account = Account(type=account_type, balance=balance)
+                db.session.add(new_account)
+                user.accounts.append(new_account)
+                db.session.commit()
+                flash('Account opened for ' + user.first_name + '!', category='success')
+                return redirect(url_for('auth.admin'))
+    return 'Error'
