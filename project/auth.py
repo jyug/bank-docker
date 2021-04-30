@@ -58,11 +58,12 @@ def sign_up():
             flash('password should be longer!', category='error')
         else:
             # add user to database.
-            new_user = User(last_name=lastName, first_name=firstName, email=email, password=password2, username=username)
+            new_user = User(last_name=lastName, first_name=firstName, email=email, password=password2,
+                            username=username)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
-            flash('Account created! Welcome '+new_user.first_name + '!',  category='success')
+            flash('Account created! Welcome ' + new_user.first_name + '!', category='success')
             return redirect(url_for('views.home'))
 
     return render_template('signUp.html', user=current_user)
@@ -173,5 +174,32 @@ def open_account():
                 user.accounts.append(new_account)
                 db.session.commit()
                 flash('Account opened for ' + user.first_name + '!', category='success')
+                return redirect(url_for('auth.admin'))
+    return 'Error'
+
+
+@auth.route('/close_account', methods=['GET', 'POST'])
+@login_required
+def close_account():
+    if request.method == 'POST':
+        users = User.query.all()
+        checking = request.form.get('checking')
+        saving = request.form.get('saving')
+        credit = request.form.get('credit')
+        customer_id = int(request.form.get('id'))
+        for user in users:
+            if user.id == customer_id:
+                for account in user.accounts:
+                    if checking:
+                        if checking == account.type:
+                            db.session.delete(account)
+                    if saving:
+                        if saving == account.type:
+                            db.session.delete(account)
+                    if credit:
+                        if credit == account.type:
+                            db.session.delete(account)
+                db.session.commit()
+                flash('Account closed for ' + user.first_name + '!', category='success')
                 return redirect(url_for('auth.admin'))
     return 'Error'
