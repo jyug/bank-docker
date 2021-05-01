@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Credit Account{% endblock %}
 {%block nav%}
 <a class="navbar-brand" href="#">Good Day!
   {% if user.last_name == None %}
@@ -16,7 +16,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbar">
+      <div class="collapse navbar-collapse" id="navbar1">
         <ul class="navbar-nav">
           {% if user.id == 1 %}
           <li class="nav-item active">
@@ -63,14 +63,19 @@
           </li>
           {% endif %}
         </ul>
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+          <a class="nav-item nav-link" id="home" href="/">Home</a>
+          </li>
+        </ul>
+      </div>
       </div>
 {% endblock %}
 {% block content%}
 <div class="container">
-  <p>Account：</p>
-  {% for account in user.accounts %}
-  <p>{{account.type}}: ${{account.balance}}</p>
-  {% endfor %}
-  <p>news</p>
+    <h2>Credit Account</h2>
+    <p>Balance：{{ account.balance }}</p>
+
 </div>
 {%endblock%}

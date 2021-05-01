@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User, Account, Payment
+from .models import User, Account, Payment, Income
 from . import db
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 from random import randint
+import datetime
 
 auth = Blueprint('auth', __name__)
 
@@ -206,34 +207,92 @@ def close_account():
         if checking:
             if account_status[0] == 1:
                 db.session.delete(customer.accounts[checking_idx])
-                db.session.commit()
+
             else:
                 flash('Not able to delete account that does not exist!', category='error')
                 return render_template('admin.html', user=current_user, customers=[customer], found=1)
         if saving:
             if account_status[1] == 1:
                 db.session.delete(customer.accounts[saving_idx])
-                db.session.commit()
             else:
                 flash('Not able to delete account that does not exist!', category='error')
                 return render_template('admin.html', user=current_user, customers=[customer], found=1)
         if credit:
             if account_status[2] == 1:
                 db.session.delete(customer.accounts[credit_idx])
-                db.session.commit()
             else:
                 flash('Not able to delete account that does not exist!', category='error')
                 return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        db.session.commit()
         flash('Account closed for ' + customer.first_name + ' ' + customer.last_name + '!', category='success')
         return render_template('admin.html', user=current_user, customers=[customer], found=1)
     return render_template('admin.html', user=current_user)
 
 
-def account_number_generator(user, type):
-    if type == 'checking':
+def account_number_generator(user, account_type):
+    if account_type == 'checking':
         type_digit = 0
-    elif type == 'saving':
+    elif account_type == 'saving':
         type_digit = 1
     else:
         type_digit = 2
     return int('8888' + '%0.4d' % randint(0, 9999) + str(type_digit) + '%0.4d' % user.id)
+
+
+@auth.route('/checking', methods=['GET', 'POST'])
+@login_required
+def checking():
+    for i in range(len(current_user.accounts)):
+        if current_user.accounts[i].type == 'checking':
+            checking_idx = i
+    return render_template('checking.html', user=current_user, account=current_user.accounts[checking_idx])
+
+
+@auth.route('/saving', methods=['GET', 'POST'])
+@login_required
+def saving():
+    for i in range(len(current_user.accounts)):
+        if current_user.accounts[i].type == 'saving':
+            saving_idx = i
+    return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx])
+
+
+@auth.route('/credit', methods=['GET', 'POST'])
+@login_required
+def credit():
+    for i in range(len(current_user.accounts)):
+        if current_user.accounts[i].type == 'credit':
+            credit_idx = i
+    return render_template('credit.html', user=current_user, account=current_user.accounts[credit_idx])
+
+
+@auth.route('/internal_trans', methods=['GET', 'POST'])
+@login_required
+def internal_trans():
+    if request.method == 'POST':
+        money = float(request.form.get('money'))
+        source = request.form.get('source')
+        destination = request.form.get('destination')
+        for i in range(len(current_user.accounts)):
+            if current_user.accounts[i].type == source:
+                source_idx = i
+            if current_user.accounts[i].type == destination:
+                destination_idx = i
+        if source_idx == destination_idx:
+            flash('Can not transfer between same accounts!', category='error')
+            return render_template('internal_trans.html', user=current_user)
+        else:
+            payment = Payment(amount=money,
+                              target_id=current_user.accounts[destination_idx].id, time=datetime.datetime.now())
+            income = Income(amount=money,
+                            source_id=current_user.accounts[source_idx].id, time=datetime.datetime.now())
+            current_user.accounts[source_idx].payments.append(payment)
+            current_user.accounts[destination_idx].incomes.append(income)
+            current_user.accounts[source_idx].balance -= money
+            current_user.accounts[destination_idx].balance += money
+            db.session.add(payment)
+            db.session.add(income)
+            db.session.commit()
+            flash('Successfully issued an internal money transfer!', category='success')
+            return render_template('internal_trans.html', user=current_user)
+    return render_template('internal_trans.html', user=current_user)
