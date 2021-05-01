@@ -32,22 +32,21 @@
             {% for c in customers %}
                 <tr>
                     <p style="font-weight:bold">Matched User: </p>
-                    <td>First name: {{c.first_name}}</td>
+                    <td><span class="col1">First name: </span><span>{{c.first_name}}</span></td>
                     </br>
-                    <td>Last name: {{c.last_name}}</td>
+                    <td><span class="col1">Last name: </span><span>{{c.last_name}}</span></td>
                     </br>
-                    <td>Email: {{c.email}}</td>
+                    <td><span class="col1">Email: </span><span>{{c.email}}</span></td>
                     </br>
-                    <td>Username: {{c.username}}</td>
+                    <td><span class="col1">Username: </span><span>{{c.username}}</span></td>
                     </br>
-                    <td>Address: {{c.address}}</td>
+                    <td><span class="col1">Address: </span><span>{{c.address}}</span></td>
                     </br>
                     {% if c.accounts|length == 0 %}
-                    <td>Accounts: N/A</td>
+                    <td><span class="col1">Accounts: </span><span>N/A</span></td>
                     {% else %}
-                    <td>Accounts:</td>
                     {% for account in c.accounts %}
-                    <li>{{account.type}}: ${{account.balance}}</li>
+                    <td><span class="col1">{{account.type}} account number: </span><span>{{account.number}}</span></td><br/>
                     {% endfor %}
                     {% endif %}
                     </br>

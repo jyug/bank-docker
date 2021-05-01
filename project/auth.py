@@ -3,6 +3,7 @@ from .models import User, Account, Payment
 from . import db
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
+from random import randint
 
 auth = Blueprint('auth', __name__)
 
@@ -110,7 +111,6 @@ def edit_user_info():
         if len(address) > 0:
             current_user.address = address
         db.session.commit()
-        print(current_user.accounts)
         flash('Information changed! Welcome back ' + current_user.first_name + '!', category='success')
         return redirect(url_for('auth.user_info'))
     return render_template('edit_user_info.html', user=current_user)
@@ -151,55 +151,89 @@ def admin():
 @login_required
 def account_management():
     if request.method == 'POST':
-        users = User.query.all()
         userid = int(request.form.get('id'))
-        for u in users:
-            if u.id == userid:
-                return render_template('account_management.html', user=current_user, customer=u)
-    return 'Error'
+        customer = User.query.get(userid)
+        return render_template('account_management.html', user=current_user, customer=customer)
+    return render_template('admin.html', user=current_user)
 
 
 @auth.route('/open_account', methods=['GET', 'POST'])
 @login_required
 def open_account():
     if request.method == 'POST':
-        users = User.query.all()
         balance = request.form.get('balance')
         account_type = request.form.get('type')
         customer_id = int(request.form.get('customer_id'))
-        for user in users:
-            if user.id == customer_id:
-                new_account = Account(type=account_type, balance=balance)
-                db.session.add(new_account)
-                user.accounts.append(new_account)
-                db.session.commit()
-                flash('Account opened for ' + user.first_name + '!', category='success')
-                return redirect(url_for('auth.admin'))
-    return 'Error'
+        customer = User.query.get(customer_id)
+        for account in customer.accounts:
+            if account.type == account_type:
+                flash('For ' + customer.first_name + ' ' + customer.last_name + ', ' + account.type + ' account exists '
+                                                                                                      'already!',
+                      category='error')
+                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        new_account = Account(type=account_type, balance=balance,
+                              number=account_number_generator(customer, account_type))
+        db.session.add(new_account)
+        customer.accounts.append(new_account)
+        db.session.commit()
+        flash('Account opened for ' + customer.first_name + ' ' + customer.last_name + '!', category='success')
+        return render_template('admin.html', user=current_user, customers=[customer], found=1)
+    return render_template('admin.html', user=current_user)
 
 
 @auth.route('/close_account', methods=['GET', 'POST'])
 @login_required
 def close_account():
     if request.method == 'POST':
-        users = User.query.all()
         checking = request.form.get('checking')
         saving = request.form.get('saving')
         credit = request.form.get('credit')
         customer_id = int(request.form.get('id'))
-        for user in users:
-            if user.id == customer_id:
-                for account in user.accounts:
-                    if checking:
-                        if checking == account.type:
-                            db.session.delete(account)
-                    if saving:
-                        if saving == account.type:
-                            db.session.delete(account)
-                    if credit:
-                        if credit == account.type:
-                            db.session.delete(account)
+        customer = User.query.get(customer_id)
+        # A list contain 3 integer 0/1 to indicate whether the customer has checking/saving/credit account
+        account_status = [0, 0, 0]
+        for i in range(len(customer.accounts)):
+            if customer.accounts[i].type == 'checking':
+                checking_idx = i
+                account_status[0] = 1
+            if customer.accounts[i].type == 'saving':
+                saving_idx = i
+                account_status[1] = 1
+            if customer.accounts[i].type == 'credit':
+                credit_idx = i
+                account_status[2] = 1
+
+        if checking:
+            if account_status[0] == 1:
+                db.session.delete(customer.accounts[checking_idx])
                 db.session.commit()
-                flash('Account closed for ' + user.first_name + '!', category='success')
-                return redirect(url_for('auth.admin'))
-    return 'Error'
+            else:
+                flash('Not able to delete account that does not exist!', category='error')
+                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        if saving:
+            if account_status[1] == 1:
+                db.session.delete(customer.accounts[saving_idx])
+                db.session.commit()
+            else:
+                flash('Not able to delete account that does not exist!', category='error')
+                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        if credit:
+            if account_status[2] == 1:
+                db.session.delete(customer.accounts[credit_idx])
+                db.session.commit()
+            else:
+                flash('Not able to delete account that does not exist!', category='error')
+                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        flash('Account closed for ' + customer.first_name + ' ' + customer.last_name + '!', category='success')
+        return render_template('admin.html', user=current_user, customers=[customer], found=1)
+    return render_template('admin.html', user=current_user)
+
+
+def account_number_generator(user, type):
+    if type == 'checking':
+        type_digit = 0
+    elif type == 'saving':
+        type_digit = 1
+    else:
+        type_digit = 2
+    return int('8888' + '%0.4d' % randint(0, 9999) + str(type_digit) + '%0.4d' % user.id)
