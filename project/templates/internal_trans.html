@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Checking Account{% endblock %}
 {%block nav%}
 <a class="navbar-brand" href="#">Good Day!
   {% if user.last_name == None %}
@@ -16,7 +16,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbar">
+      <div class="collapse navbar-collapse" id="navbar1">
         <ul class="navbar-nav">
           {% if user.id == 1 %}
           <li class="nav-item active">
@@ -63,14 +63,53 @@
           </li>
           {% endif %}
         </ul>
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+          <a class="nav-item nav-link" id="home" href="/">Home</a>
+          </li>
+        </ul>
+      </div>
       </div>
 {% endblock %}
 {% block content%}
 <div class="container">
-  <p>Account：</p>
-  {% for account in user.accounts %}
-  <p>{{account.type}}: ${{account.balance}}</p>
-  {% endfor %}
-  <p>news</p>
+    <form method="POST">
+    <h3 align="center">Internal Transfer</h3>
+        <p>Account Balances：</p>
+        {% for account in user.accounts %}
+        <p>{{account.type}}: ${{account.balance}}</p>
+        {% endfor %}
+    <div class="form-group">
+        <label>From: </label>
+        <select id="source" name="source">
+                <option value="checking">Checking Account</option>
+                <option value="saving">Saving Account</option>
+                <option value="credit">Credit Account</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>To: </label>
+        <select id="destination" name="destination">
+                <option value="checking">Checking Account</option>
+                <option value="saving">Saving Account</option>
+                <option value="credit">Credit Account</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Amount: </label>
+        <input
+                type="number"
+                step="0.001"
+                class="form-control"
+                id="money"
+                name="money"
+                placeholder="Enter the money amount"
+        />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Issue transfer</button>
+</form>
+
 </div>
 {%endblock%}
