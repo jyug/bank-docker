@@ -20,6 +20,7 @@ class Account(db.Model):
     type = db.Column(db.String(150))
     balance = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    number = db.Column(db.BigInteger, unique=True)
     payments = db.relationship('Payment')
     incomes = db.relationship('Income')
 
