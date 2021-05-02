@@ -31,6 +31,7 @@ class Payment(db.Model):
     target_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     time = db.Column(db.DateTime, nullable=False,
                      default=datetime.utcnow)
+    type = db.Column(db.String(150), default='payment')
 
 
 class Income(db.Model):
@@ -39,4 +40,5 @@ class Income(db.Model):
     source_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     time = db.Column(db.DateTime, nullable=False,
                      default=datetime.utcnow)
+    type = db.Column(db.String(150), default='income')
 
