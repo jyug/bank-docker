@@ -95,6 +95,15 @@
     </div>
 
 
-
+  <h2>Checking Account</h2>
+  <p>Balance：${{ account.balance }}</p>
+  <p>Transactions: </p>
+  {% for r in records %}
+  {% if r[0].type == 'income' %}
+  <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>
+  {% else %}
+  <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>
+  {% endif %}
+  {% endfor %}
 </div>
 {%endblock%}
