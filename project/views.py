@@ -13,8 +13,6 @@ def home():
     return render_template('home.html', user=current_user)
 
 
-
-
 @views.route('/test')
 @login_required
 def test():
