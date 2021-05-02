@@ -39,6 +39,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% else %}
@@ -59,6 +60,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% endif %}
@@ -83,30 +85,88 @@
     <div class="col 4"></div>
   </div>
 
+  <br>
 
     <div class="row">
-    <div class="col 4"></div>
-    <div class="col 4">
-      <div class="panel panel-success">
+      <div class="col 2"></div>
+      <div class="col 8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <span class="glyphicon glyphicon-usd"></span>
+                Remaining Balance
+              </h3>
+            </div>
+            <div class="panel-body">
 
+               ${{ account.balance }}
+            </div>
+        </div>
       </div>
-    </div>
-    <div class="col 4"></div>
-    </div>
+      <div class="col 2"></div>
+</div>
 
-  {% if account is none %}
-  <p>You don't have a checking account yet, please contact the bank to open!</p>
-  {% else %}
-  <h2>Checking Account</h2>
-  <p>Balance：${{ account.balance }}</p>
-  <p>Transactions: </p>
-  {% for r in records %}
-  {% if r[0].type == 'income' %}
-  <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>
-  {% else %}
-  <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>
-  {% endif %}
-  {% endfor %}
-  {% endif %}
+  <table class="table">
+  <caption>
+    <p class="bg-secondary text-white">Checking Transaction Record</p>
+  </caption>
+  <thead>
+    <tr>
+      <th>Transaction</th>
+      <th>Target ID</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+
+      {% if r[0].type == 'income' %}
+      <tr class="success">
+        <td>
+          <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>
+        </td>
+        <td>
+          wherr
+        </td>
+        <td>
+          2022-12-2
+        </td>
+        </tr>
+      {% else %}
+        <tr class="danger">
+        <td>
+          <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>
+        </td>
+        <td>
+          how
+        </td>
+        <td>
+          1999-2-20
+        </td>
+          {% endif %}
+        </tr>
+
+    {% endfor %}
+  </tbody>
+  </table>
+
+
+
+<!--{% if account is none %}-->
+<!--  <p>You don't have a checking account yet, please contact the bank to open!</p>-->
+<!--  {% else %}-->
+<!--  <h2>Checking Account</h2>-->
+<!--  <p>Balance：${{ account.balance }}</p>-->
+<!--  <p>Transactions: </p>-->
+<!--  {% for r in records %}-->
+<!--  {% if r[0].type == 'income' %}-->
+<!--  <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>-->
+<!--  {% else %}-->
+<!--  <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>-->
+<!--  {% endif %}-->
+<!--  {% endfor %}-->
+<!--  {% endif %}-->
+
+
 </div>
 {%endblock%}

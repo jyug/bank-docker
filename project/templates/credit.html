@@ -39,6 +39,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% else %}
@@ -59,6 +60,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% endif %}
@@ -77,8 +79,37 @@
 <p>You don't have a credit account yet, please contact the bank to open!</p>
 {% else %}
 <div class="container">
-    <h2>Credit Account</h2>
-    <p>Balance：${{ account.balance }}</p>
+
+
+  <div class="row">
+    <div class="col 4"></div>
+    <div class="col 4">
+      <h1 class="text=body">Credit Account</h1>
+    </div>
+    <div class="col 4"></div>
+  </div>
+
+  <br>
+
+    <div class="row">
+      <div class="col 2"></div>
+      <div class="col 8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <span class="glyphicon glyphicon-usd"></span>
+                  Remaining Balance
+              </h3>
+            </div>
+            <div class="panel-body">
+
+               ${{ account.balance }}
+            </div>
+        </div>
+      </div>
+      <div class="col 2"></div>
+</div>
+
 
 </div>
 {% endif %}
