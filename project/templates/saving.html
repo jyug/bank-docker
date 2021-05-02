@@ -73,9 +73,13 @@
       </div>
 {% endblock %}
 {% block content%}
+{% if account is none %}
+<p>You don't have a saving account yet, please contact the bank to open!</p>
+{% else %}
 <div class="container">
     <h2>Saving Account</h2>
     <p>Balance：${{ account.balance }}</p>
 
 </div>
+{% endif %}
 {%endblock%}

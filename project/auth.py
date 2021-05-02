@@ -242,10 +242,13 @@ def account_number_generator(user, account_type):
 @auth.route('/checking', methods=['GET', 'POST'])
 @login_required
 def checking():
+    checking_idx = -1
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'checking':
             checking_idx = i
     transactions = []
+    if checking_idx == -1:
+        return render_template('checking.html', user=current_user, account=None, records=None)
     for p in current_user.accounts[checking_idx].payments:
         print(p.target_id)
 
@@ -278,18 +281,24 @@ def checking():
 @auth.route('/saving', methods=['GET', 'POST'])
 @login_required
 def saving():
+    saving_idx = -1
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'saving':
             saving_idx = i
+    if saving_idx == -1:
+        return render_template('saving.html', user=current_user, account=None, records=None)
     return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx])
 
 
 @auth.route('/credit', methods=['GET', 'POST'])
 @login_required
 def credit():
+    credit_idx = -1
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'credit':
             credit_idx = i
+    if credit_idx == -1:
+        return render_template('credit.html', user=current_user, account=None, records=None)
     return render_template('credit.html', user=current_user, account=current_user.accounts[credit_idx])
 
 

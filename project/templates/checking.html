@@ -94,7 +94,9 @@
     <div class="col 4"></div>
     </div>
 
-
+  {% if account is none %}
+  <p>You don't have a checking account yet, please contact the bank to open!</p>
+  {% else %}
   <h2>Checking Account</h2>
   <p>Balance：${{ account.balance }}</p>
   <p>Transactions: </p>
@@ -105,5 +107,6 @@
   <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>
   {% endif %}
   {% endfor %}
+  {% endif %}
 </div>
 {%endblock%}
