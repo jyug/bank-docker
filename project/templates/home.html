@@ -68,10 +68,150 @@
 {% endblock %}
 {% block content%}
 <div class="container">
-  <p>Account：</p>
+
+     <h2 class="text-body">Account Summary</h2>
+
+
+
+  {% set ns1 = namespace(checking_flag = 0) %}
+  {% set ns2 = namespace(saving_flag = 0) %}
+  {% set ns3 = namespace(credit_flag = 0) %}
+
   {% for account in user.accounts %}
-  <p>{{account.type}}: ${{account.balance}}</p>
-  {% endfor %}
-  <p>news</p>
+    {% if account.type == 'checking' %}
+
+
+          <div class="row">
+            <div class="col 6">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">
+                          CHECKING ACCOUNT
+                      </h3>
+                  </div>
+                  <div class="panel-body">
+                      ${{account.balance}}
+                  </div>
+                </div>
+            </div>
+          </div>
+          {% set ns1.checking_flag = 1 %}
+
+      {% elif account.type == 'saving' %}
+            <div class="row">
+            <div class="col 6">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">
+                          SAVING ACCOUNT
+                      </h3>
+                  </div>
+                  <div class="panel-body">
+                      ${{account.balance}}
+                  </div>
+                </div>
+            </div>
+              {% set ns2.saving_flag = 1 %}
+        {% elif account.type == 'credit' %}
+            <div class="row">
+            <div class="col 6">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">
+                          CREDIT ACCOUNT
+                      </h3>
+                  </div>
+                  <div class="panel-body">
+                      ${{account.balance}}
+                  </div>
+                </div>
+            </div>
+              {% set ns3.credit_flag = 1 %}
+            {% endif %}
+
+
+{% endfor %}
+
+
+             {% if ns1.checking_flag == 0 %}
+                  <div class="row">
+                     <div class="col 6">
+                         <div class="panel panel-primary">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    CHECKING ACCOUNT
+                                </h3>
+                              </div>
+                              <div class="panel-body">
+                                      N/A:    No Checking Account Available!
+                              </div>
+                        </div>
+                      </div>
+                    </div>
+              {% endif %}
+
+
+
+              {% if ns2.saving_flag == 0 %}
+                  <div class="row">
+                     <div class="col 6">
+                         <div class="panel panel-primary">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    SAVING ACCOUNT
+                                </h3>
+                              </div>
+                              <div class="panel-body">
+                                      N/A:    No Saving Account Available!
+                              </div>
+                        </div>
+                      </div>
+                    </div>
+              {% endif %}
+
+
+
+              {% if ns3.credit_flag == 0 %}
+                  <div class="row">
+                     <div class="col 6">
+                         <div class="panel panel-primary">
+                              <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    CREDIT ACCOUNT
+                                </h3>
+                              </div>
+                              <div class="panel-body">
+                                    N/A:    No Credit Account Available!
+                              </div>
+                        </div>
+                      </div>
+                    </div>
+              {% endif %}
+
+
+
+
+
+
+
+
+
+  <div class="row">
+        <div class="col 12">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                  <h3 class="panel-title">
+                      NEWS!!
+                  </h3>
+              </div>
+              <div class="panel-body">
+                  abcjdcjs
+              </div>
+          </div>
+        </div>
+  </div>
+
+
+
 </div>
 {%endblock%}
