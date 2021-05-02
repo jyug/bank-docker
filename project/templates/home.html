@@ -40,6 +40,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% else %}
@@ -60,6 +61,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
           <a class="dropdown-item" href="/wire">Wire money</a>
+          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
         </div>
           </li>
           {% endif %}
@@ -99,33 +101,35 @@
 
       {% elif account.type == 'saving' %}
             <div class="row">
-            <div class="col 6">
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                      <h3 class="panel-title">
-                          SAVING ACCOUNT
-                      </h3>
-                  </div>
-                  <div class="panel-body">
-                      ${{account.balance}}
-                  </div>
+                <div class="col 6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    SAVING ACCOUNT
+                                </h3>
+                        </div>
+                        <div class="panel-body">
+                                ${{account.balance}}
+                        </div>
+                    </div>
                 </div>
             </div>
               {% set ns2.saving_flag = 1 %}
         {% elif account.type == 'credit' %}
             <div class="row">
-            <div class="col 6">
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                      <h3 class="panel-title">
-                          CREDIT ACCOUNT
-                      </h3>
-                  </div>
-                  <div class="panel-body">
-                      ${{account.balance}}
-                  </div>
+                 <div class="col 6">
+                        <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        CREDIT ACCOUNT
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    ${{account.balance}}
+                                </div>
+                        </div>
                 </div>
-            </div>
+                </div>
               {% set ns3.credit_flag = 1 %}
             {% endif %}
 

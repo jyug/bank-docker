@@ -396,3 +396,7 @@ def transaction_sort(e):
     return e[0].time
 
 
+@auth.route('/recurring', methods=['GET', 'POST'])
+@login_required
+def recurring_transfer():
+    return render_template('recurring_transaction.html', user=current_user)

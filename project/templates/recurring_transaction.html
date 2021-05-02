@@ -1,6 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Saving Account{% endblock %}
+{% block title %}Checking Account{% endblock %}
 {%block nav%}
+
+
 <a class="navbar-brand" href="#">Good Day!
   {% if user.last_name == None %}
   {{ user.first_name  + '!'}}
@@ -75,42 +77,30 @@
       </div>
 {% endblock %}
 {% block content%}
-{% if account is none %}
-<p>You don't have a saving account yet, please contact the bank to open!</p>
-{% else %}
 <div class="container">
 
+    <h3 align="center">Internal Transfer</h3>
+        <br>
+        <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col 4"></div>
+                        <p class="font-italic text-body font-weight-bolder">ACCOUNT BALANCE</p>
+                        <div class="col 4"></div>
+                    </div>
+                </div>
+                    <table class="table">
+                        <th>Account Type</th><th>Balance Remaining</th>
+                            {% for account in user.accounts %}
+                            <tr><td>{{account.type}}</td><td>${{account.balance}}</td></tr>
 
-  <div class="row">
-    <div class="col 4"></div>
-    <div class="col 4">
-      <h1 class="text=body">Saving Account</h1>
-    </div>
-    <div class="col 4"></div>
-  </div>
-
-  <br>
-
-    <div class="row">
-      <div class="col 2"></div>
-      <div class="col 8">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-              <h3 class="panel-title">
-                <span class="glyphicon glyphicon-usd"></span>
-                  Remaining Balance
-              </h3>
-            </div>
-            <div class="panel-body">
-
-               ${{ account.balance }}
-            </div>
+                            {% endfor %}
+                    </table>
         </div>
-      </div>
-      <div class="col 2"></div>
-</div>
+<br>
+    </div>
 
 
-</div>
-{% endif %}
+
+
 {%endblock%}
