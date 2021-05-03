@@ -246,28 +246,11 @@ def checking():
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'checking':
             checking_idx = i
-    transactions = []
+
     if checking_idx == -1:
         return render_template('checking.html', user=current_user, account=None, records=None)
-    for p in current_user.accounts[checking_idx].payments:
-        target = User.query.get(Account.query.get(p.target_id).user_id)
-        t_type = Account.query.get(p.target_id).type
-        if target.id == current_user.id:
-            notation = 'Internal transaction to: ' + str(t_type)
-        else:
-            notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
-        transactions.append((p, notation, '-'))
-
-    for i in current_user.accounts[checking_idx].incomes:
-        source = User.query.get(Account.query.get(i.source_id).user_id)
-        s_type = Account.query.get(i.source_id).type
-        if source.id == current_user.id:
-            notation = 'Internal transaction from: ' + str(s_type)
-        else:
-            notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
-        transactions.append((i, notation, '+'))
-
-    transactions.sort(reverse=True, key=transaction_sort)
+    transactions = []
+    transaction_list(transactions, current_user.accounts[checking_idx])
     return render_template('checking.html', user=current_user, account=current_user.accounts[checking_idx],
                            records=transactions)
 
@@ -281,7 +264,11 @@ def saving():
             saving_idx = i
     if saving_idx == -1:
         return render_template('saving.html', user=current_user, account=None, records=None)
-    return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx])
+    transactions = []
+    transaction_list(transactions, current_user.accounts[saving_idx])
+    print(transactions)
+    return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx],
+                           records=transactions)
 
 
 @auth.route('/credit', methods=['GET', 'POST'])
@@ -293,7 +280,10 @@ def credit():
             credit_idx = i
     if credit_idx == -1:
         return render_template('credit.html', user=current_user, account=None, records=None)
-    return render_template('credit.html', user=current_user, account=current_user.accounts[credit_idx])
+    transactions = []
+    transaction_list(transactions, current_user.accounts[credit_idx])
+    return render_template('credit.html', user=current_user, account=current_user.accounts[credit_idx],
+                           records=transactions)
 
 
 @auth.route('/internal_trans', methods=['GET', 'POST'])
@@ -317,16 +307,11 @@ def internal_trans():
                                       source_id=current_user.accounts[source_idx].id,
                                       time=datetime.datetime.now())
 
-            # payment = Payment(amount=money,
-            #                   target_id=current_user.accounts[destination_idx].id, time=datetime.datetime.now())
-            # income = Income(amount=money,
-            #                 source_id=current_user.accounts[source_idx].id, time=datetime.datetime.now())
             current_user.accounts[source_idx].payments.append(transaction)
             current_user.accounts[destination_idx].incomes.append(transaction)
             current_user.accounts[source_idx].balance -= money
             current_user.accounts[destination_idx].balance += money
             db.session.add(transaction)
-            # db.session.add(income)
             db.session.commit()
             flash('Successfully issued an internal money transfer!', category='success')
             return render_template('internal_trans.html', user=current_user)
@@ -342,6 +327,7 @@ def wire():
         firstName = name.split()[0]
         lastName = name.split()[1]
         email = request.form.get('email')
+        note = request.form.get('note')
         users = User.query.all()
         source_idx = -1
         for i in range(len(current_user.accounts)):
@@ -358,18 +344,11 @@ def wire():
                             transaction = Transaction(type='internal', amount=money,
                                                       target_id=account.id,
                                                       source_id=current_user.accounts[source_idx].id,
+                                                      description=note,
                                                       time=datetime.datetime.now())
-                            # payment = Payment(amount=money,
-                            #                 target_id=account.id,
-                            #                time=datetime.datetime.now())
-                            # income = Income(amount=money,
-                            #             source_id=current_user.accounts[source_idx].id,
-                            #           time=datetime.datetime.now())
 
                             current_user.accounts[source_idx].payments.append(transaction)
                             account.incomes.append(transaction)
-                            # print(account.id)
-                            # print(payment.target_id)
 
                             if money > current_user.accounts[source_idx].balance:
                                 flash('You do not have enough money!', category='error')
@@ -394,6 +373,26 @@ def wire():
 
 def transaction_sort(e):
     return e[0].time
+
+
+def transaction_list(transactions, account):
+    for p in account.payments:
+        target = User.query.get(Account.query.get(p.target_id).user_id)
+        t_type = Account.query.get(p.target_id).type
+        if target.id == current_user.id:
+            notation = 'Internal transaction to: ' + str(t_type)
+        else:
+            notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
+        transactions.append((p, notation, '-', t_type))
+    for i in account.incomes:
+        source = User.query.get(Account.query.get(i.source_id).user_id)
+        s_type = Account.query.get(i.source_id).type
+        if source.id == current_user.id:
+            notation = 'Internal transaction from: ' + str(s_type)
+        else:
+            notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
+        transactions.append((i, notation, '+', s_type))
+    transactions.sort(reverse=True, key=transaction_sort)
 
 
 @auth.route('/recurring', methods=['GET', 'POST'])
