@@ -86,11 +86,13 @@
   </div>
 
   <br>
-
-    <div class="row">
+{% if account is none %}
+<p>You don't have a checking account yet, please contact the bank to open!</p>
+  {% else %}
+    <div class="row ">
       <div class="col 2"></div>
       <div class="col 8">
-        <div class="panel panel-info">
+        <div class="panel panel-info ">
             <div class="panel-heading">
               <h3 class="panel-title">
                 <span class="glyphicon glyphicon-usd"></span>
@@ -112,36 +114,36 @@
   </caption>
   <thead>
     <tr>
-      <th>Transaction</th>
-      <th>Target ID</th>
+      <th>Transaction Amount</th>
+      <th>Target/Source</th>
       <th>Time</th>
     </tr>
   </thead>
   <tbody>
     {% for r in records %}
 
-      {% if r[0].type == 'income' %}
+      {% if r[2] == '+' %}
       <tr class="success">
         <td>
-          <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>
+          <p style="color:green">+ ${{r[0].amount}}   </p>
         </td>
         <td>
-          wherr
+          {{r[1]}}
         </td>
         <td>
-          2022-12-2
+          {{r[0].time}}
         </td>
         </tr>
       {% else %}
         <tr class="danger">
         <td>
-          <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>
+          <p style="color:red">- ${{r[0].amount}}  </p>
         </td>
         <td>
-          how
+          {{r[1]}}
         </td>
         <td>
-          1999-2-20
+          {{r[0].time}}
         </td>
           {% endif %}
         </tr>
@@ -149,24 +151,7 @@
     {% endfor %}
   </tbody>
   </table>
-
-
-
-<!--{% if account is none %}-->
-<!--  <p>You don't have a checking account yet, please contact the bank to open!</p>-->
-<!--  {% else %}-->
-<!--  <h2>Checking Account</h2>-->
-<!--  <p>Balance：${{ account.balance }}</p>-->
-<!--  <p>Transactions: </p>-->
-<!--  {% for r in records %}-->
-<!--  {% if r[0].type == 'income' %}-->
-<!--  <p style="color:green">+ ${{r[0].amount}}  {{r[0].time}} {{r[1]}}</p>-->
-<!--  {% else %}-->
-<!--  <p style="color:red">- ${{r[0].amount}} {{r[1].time}} {{r[1]}}</p>-->
-<!--  {% endif %}-->
-<!--  {% endfor %}-->
-<!--  {% endif %}-->
-
-
+  {% endif %}
 </div>
+
 {%endblock%}
