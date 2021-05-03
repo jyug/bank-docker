@@ -303,7 +303,6 @@ def saving():
         return render_template('saving.html', user=current_user, account=None, records=None)
     transactions = []
     transaction_list(transactions, current_user.accounts[saving_idx])
-    print(transactions)
     return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx],
                            records=transactions)
 
@@ -328,6 +327,9 @@ def credit():
 def internal_trans():
     if request.method == 'POST':
         money = float(request.form.get('money'))
+        if money <= 0:
+            flash('Invalid money amount!', category='error')
+            return render_template('internal_trans.html', user=current_user)
         source = request.form.get('source')
         destination = request.form.get('destination')
         source_idx = -1
@@ -343,7 +345,7 @@ def internal_trans():
                       category='error')
                 return render_template('internal_trans.html', user=current_user)
             if destination_idx == -1:
-                flash('You do not have a ' + destination+ ' account yet, not able to issue transaction!',
+                flash('You do not have a ' + destination + ' account yet, not able to issue transaction!',
                       category='error')
                 return render_template('internal_trans.html', user=current_user)
         if source_idx == destination_idx:
@@ -372,6 +374,9 @@ def internal_trans():
 def wire():
     if request.method == 'POST':
         money = float(request.form.get('money'))
+        if money <= 0:
+            flash('Invalid money amount!', category='error')
+            return render_template('wire.html', user=current_user)
         name = request.form.get('name')
         firstName = name.split()[0]
         lastName = name.split()[1]
@@ -429,22 +434,47 @@ def transaction_sort(e):
 
 
 def transaction_list(transactions, account):
+    time = datetime.datetime.now().replace(microsecond=0)
+    # According to Google, 18 months is 547.501 days, so we take 547 days as the time difference boundary
+    eighteen_months = datetime.timedelta(days=547)
     for p in account.payments:
-        target = User.query.get(Account.query.get(p.target_id).user_id)
-        t_type = Account.query.get(p.target_id).type
-        if target.id == current_user.id:
-            notation = 'Internal transaction to: ' + str(t_type)
+        try:
+            target = User.query.get(Account.query.get(p.target_id).user_id)
+            t_type = Account.query.get(p.target_id).type
+        except AttributeError:
+            continue
+
+        payment_time_diff = time - p.time.replace(microsecond=0)
+        if eighteen_months > payment_time_diff:
+            if target.id == current_user.id:
+                notation = 'Internal transaction to: ' + str(t_type)
+            else:
+                if p.type == 'deposit':
+                    notation = 'Deposit to: ' + str(target.first_name) + ' ' + str(target.last_name)
+                else:
+                    notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
+            transactions.append((p, notation, '-', t_type, p.type, p.description))
         else:
-            notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
-        transactions.append((p, notation, '-', t_type, p.type, p.description))
+            pass
     for i in account.incomes:
-        source = User.query.get(Account.query.get(i.source_id).user_id)
-        s_type = Account.query.get(i.source_id).type
-        if source.id == current_user.id:
-            notation = 'Internal transaction from: ' + str(s_type)
+        try:
+            source = User.query.get(Account.query.get(i.source_id).user_id)
+            s_type = Account.query.get(i.source_id).type
+        except AttributeError:
+            continue
+
+        income_time_diff = time - i.time.replace(microsecond=0)
+        if eighteen_months > income_time_diff:
+            if source.id == current_user.id:
+                notation = 'Internal transaction from: ' + str(s_type)
+            else:
+                if i.type == 'deposit':
+                    notation = 'Deposit'
+                else:
+                    notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
+            transactions.append((i, notation, '+', s_type, i.type, i.description))
         else:
-            notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
-        transactions.append((i, notation, '+', s_type, i.type, i.description))
+            pass
     transactions.sort(reverse=True, key=transaction_sort)
 
 
