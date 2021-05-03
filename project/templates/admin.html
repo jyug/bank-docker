@@ -47,12 +47,19 @@
                     {% else %}
                     {% for account in c.accounts %}
                     <td><span class="col1">{{account.type}} account number: </span><span>{{account.number}}</span></td><br/>
+                    <td><span class="col1">{{account.type}} account balance: </span><span>${{account.balance}}</span></td><br/>
                     {% endfor %}
                     {% endif %}
                     </br>
-                    <form method="POST" action="/account_management">
-                        <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
-                    </form>
+
+                        <form method="POST" action="/account_management">
+                            <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
+                        </form>
+                        <br/>
+                        <form method="POST" action="/deposit_info">
+                            <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Deposit money</button>
+                        </form>
+
                     <br/>
                     <p style="font-weight:bold">Close account for user</p>
                     <form method="POST" action="/close_account">
