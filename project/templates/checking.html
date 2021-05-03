@@ -116,6 +116,8 @@
     <tr>
       <th>Transaction Amount</th>
       <th>Target/Source</th>
+      <th>Method</th>
+      <th>Description</th>
       <th>Time</th>
     </tr>
   </thead>
@@ -131,6 +133,12 @@
           {{r[1]}}
         </td>
         <td>
+          {{r[4]}}
+        </td>
+        <td>
+          {{r[5]}}
+        </td>
+        <td>
           {{r[0].time}}
         </td>
         </tr>
@@ -141,6 +149,12 @@
         </td>
         <td>
           {{r[1]}}
+        </td>
+          <td>
+          {{r[4]}}
+        </td>
+        <td>
+          {{r[5]}}
         </td>
         <td>
           {{r[0].time}}

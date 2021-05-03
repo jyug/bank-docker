@@ -239,6 +239,43 @@ def account_number_generator(user, account_type):
     return int('8888' + '%0.4d' % randint(0, 9999) + str(type_digit) + '%0.4d' % user.id)
 
 
+@auth.route('/deposit_info', methods=['GET', 'POST'])
+@login_required
+def deposit_info():
+    if request.method == 'POST':
+        userid = int(request.form.get('id'))
+        customer = User.query.get(userid)
+        return render_template('deposit_info.html', user=current_user, customer=customer)
+    return render_template('admin.html', user=current_user)
+
+
+@auth.route('/deposit', methods=['GET', 'POST'])
+@login_required
+def deposit():
+    if request.method == 'POST':
+        money = float(request.form.get('money'))
+        account_type = request.form.get('account')
+        method = request.form.get('method')
+        customer_id = int(request.form.get('customer_id'))
+        customer = User.query.get(customer_id)
+        for account in customer.accounts:
+            if account.type == account_type:
+                transaction = Transaction(type='deposit', amount=money,
+                                          target_id=account.id,
+                                          source_id=1,
+                                          time=datetime.datetime.now(),
+                                          description='Deposit by ' + method)
+                account.incomes.append(transaction)
+                account.balance += money
+                db.session.add(transaction)
+                db.session.commit()
+                flash('$' + str(money) + 'has been added to ' + customer.first_name + ' '
+                      + customer.last_name + 's ' + account_type + ' account!', category='success')
+                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        flash('This customer does not have ' + account_type + ' yet!', category='error')
+        return render_template('admin.html', user=current_user, customers=[customer], found=1)
+
+
 @auth.route('/checking', methods=['GET', 'POST'])
 @login_required
 def checking():
@@ -293,11 +330,22 @@ def internal_trans():
         money = float(request.form.get('money'))
         source = request.form.get('source')
         destination = request.form.get('destination')
+        source_idx = -1
+        destination_idx = -1
         for i in range(len(current_user.accounts)):
             if current_user.accounts[i].type == source:
                 source_idx = i
             if current_user.accounts[i].type == destination:
                 destination_idx = i
+        if source_idx == -1 or destination_idx == -1:
+            if source_idx == -1:
+                flash('You do not have a ' + source + ' account yet, not able to issue transaction!',
+                      category='error')
+                return render_template('internal_trans.html', user=current_user)
+            if destination_idx == -1:
+                flash('You do not have a ' + destination+ ' account yet, not able to issue transaction!',
+                      category='error')
+                return render_template('internal_trans.html', user=current_user)
         if source_idx == destination_idx:
             flash('Can not transfer between same accounts!', category='error')
             return render_template('internal_trans.html', user=current_user)
@@ -305,7 +353,8 @@ def internal_trans():
             transaction = Transaction(type='internal', amount=money,
                                       target_id=current_user.accounts[destination_idx].id,
                                       source_id=current_user.accounts[source_idx].id,
-                                      time=datetime.datetime.now())
+                                      time=datetime.datetime.now(),
+                                      description='Internal transfer')
 
             current_user.accounts[source_idx].payments.append(transaction)
             current_user.accounts[destination_idx].incomes.append(transaction)
@@ -328,10 +377,14 @@ def wire():
         lastName = name.split()[1]
         email = request.form.get('email')
         note = request.form.get('note')
+        method = request.form.get('method')
         users = User.query.all()
         source_idx = -1
+        account_type = 'checking'
+        if method == 'credit':
+            account_type = 'credit'
         for i in range(len(current_user.accounts)):
-            if current_user.accounts[i].type == 'checking':
+            if current_user.accounts[i].type == account_type:
                 source_idx = i
         if source_idx not in [0, 1, 2]:
             flash('You do not have a checking account yet, please contact the bank to open!', category='error')
@@ -341,7 +394,7 @@ def wire():
                 if user.first_name == firstName and user.last_name == lastName:
                     for account in user.accounts:
                         if account.type == 'checking':
-                            transaction = Transaction(type='internal', amount=money,
+                            transaction = Transaction(type=method, amount=money,
                                                       target_id=account.id,
                                                       source_id=current_user.accounts[source_idx].id,
                                                       description=note,
@@ -383,7 +436,7 @@ def transaction_list(transactions, account):
             notation = 'Internal transaction to: ' + str(t_type)
         else:
             notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
-        transactions.append((p, notation, '-', t_type))
+        transactions.append((p, notation, '-', t_type, p.type, p.description))
     for i in account.incomes:
         source = User.query.get(Account.query.get(i.source_id).user_id)
         s_type = Account.query.get(i.source_id).type
@@ -391,7 +444,7 @@ def transaction_list(transactions, account):
             notation = 'Internal transaction from: ' + str(s_type)
         else:
             notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
-        transactions.append((i, notation, '+', s_type))
+        transactions.append((i, notation, '+', s_type, i.type, i.description))
     transactions.sort(reverse=True, key=transaction_sort)
 
 
