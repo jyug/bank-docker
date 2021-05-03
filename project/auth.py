@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User, Account, Payment, Income
+from .models import User, Account, Transaction
 from . import db
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
@@ -250,19 +250,13 @@ def checking():
     if checking_idx == -1:
         return render_template('checking.html', user=current_user, account=None, records=None)
     for p in current_user.accounts[checking_idx].payments:
-        print(p.target_id)
-
         target = User.query.get(Account.query.get(p.target_id).user_id)
         t_type = Account.query.get(p.target_id).type
-        print(target.first_name)
-        print(Account.query.get(p.target_id).user_id)
-        print(target.accounts)
-        print(current_user.id)
         if target.id == current_user.id:
             notation = 'Internal transaction to: ' + str(t_type)
         else:
-            notation = 'Payment to: ' + str(target.first_name) + str(target.last_name)
-        transactions.append((p, notation))
+            notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
+        transactions.append((p, notation, '-'))
 
     for i in current_user.accounts[checking_idx].incomes:
         source = User.query.get(Account.query.get(i.source_id).user_id)
@@ -270,8 +264,8 @@ def checking():
         if source.id == current_user.id:
             notation = 'Internal transaction from: ' + str(s_type)
         else:
-            notation = 'Income from: ' + str(source.first_name) + str(source.last_name)
-        transactions.append((i, notation))
+            notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
+        transactions.append((i, notation, '+'))
 
     transactions.sort(reverse=True, key=transaction_sort)
     return render_template('checking.html', user=current_user, account=current_user.accounts[checking_idx],
@@ -318,16 +312,21 @@ def internal_trans():
             flash('Can not transfer between same accounts!', category='error')
             return render_template('internal_trans.html', user=current_user)
         else:
-            payment = Payment(amount=money,
-                              target_id=current_user.accounts[destination_idx].id, time=datetime.datetime.now())
-            income = Income(amount=money,
-                            source_id=current_user.accounts[source_idx].id, time=datetime.datetime.now())
-            current_user.accounts[source_idx].payments.append(payment)
-            current_user.accounts[destination_idx].incomes.append(income)
+            transaction = Transaction(type='internal', amount=money,
+                                      target_id=current_user.accounts[destination_idx].id,
+                                      source_id=current_user.accounts[source_idx].id,
+                                      time=datetime.datetime.now())
+
+            # payment = Payment(amount=money,
+            #                   target_id=current_user.accounts[destination_idx].id, time=datetime.datetime.now())
+            # income = Income(amount=money,
+            #                 source_id=current_user.accounts[source_idx].id, time=datetime.datetime.now())
+            current_user.accounts[source_idx].payments.append(transaction)
+            current_user.accounts[destination_idx].incomes.append(transaction)
             current_user.accounts[source_idx].balance -= money
             current_user.accounts[destination_idx].balance += money
-            db.session.add(payment)
-            db.session.add(income)
+            db.session.add(transaction)
+            # db.session.add(income)
             db.session.commit()
             flash('Successfully issued an internal money transfer!', category='success')
             return render_template('internal_trans.html', user=current_user)
@@ -356,28 +355,29 @@ def wire():
                 if user.first_name == firstName and user.last_name == lastName:
                     for account in user.accounts:
                         if account.type == 'checking':
-                            payment = Payment(amount=money,
-                                              target_id=account.id,
-                                              time=datetime.datetime.now())
-                            income = Income(amount=money,
-                                            source_id=current_user.accounts[source_idx].id,
-                                            time=datetime.datetime.now())
+                            transaction = Transaction(type='internal', amount=money,
+                                                      target_id=account.id,
+                                                      source_id=current_user.accounts[source_idx].id,
+                                                      time=datetime.datetime.now())
+                            # payment = Payment(amount=money,
+                            #                 target_id=account.id,
+                            #                time=datetime.datetime.now())
+                            # income = Income(amount=money,
+                            #             source_id=current_user.accounts[source_idx].id,
+                            #           time=datetime.datetime.now())
 
-                            current_user.accounts[source_idx].payments.append(payment)
-                            account.incomes.append(income)
+                            current_user.accounts[source_idx].payments.append(transaction)
+                            account.incomes.append(transaction)
+                            # print(account.id)
+                            # print(payment.target_id)
 
-                            print(payment.target_id)
-                            print(income.source_id)
-                            print(income.source_id)
-                            print(payment.target_id)
                             if money > current_user.accounts[source_idx].balance:
                                 flash('You do not have enough money!', category='error')
                                 return render_template('wire.html', user=current_user)
                             else:
                                 current_user.accounts[source_idx].balance -= money
                                 account.balance += money
-                                db.session.add(payment)
-                                db.session.add(income)
+                                db.session.add(transaction)
                                 db.session.commit()
                                 flash('Wire transfer complete!', category='success')
                                 return redirect(url_for('views.home'))
