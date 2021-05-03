@@ -75,30 +75,28 @@
       </div>
 {% endblock %}
 {% block content%}
-{% if account is none %}
-<p>You don't have a saving account yet, please contact the bank to open!</p>
-{% else %}
 <div class="container">
-
 
   <div class="row">
     <div class="col 4"></div>
     <div class="col 4">
-      <h1 class="text=body">Saving Account</h1>
+      <h1>Saving Account</h1>
     </div>
     <div class="col 4"></div>
   </div>
 
   <br>
-
-    <div class="row">
+{% if account is none %}
+<p>You don't have a saving account yet, please contact the bank to open!</p>
+{% else %}
+<div class="row ">
       <div class="col 2"></div>
       <div class="col 8">
-        <div class="panel panel-info">
+        <div class="panel panel-info ">
             <div class="panel-heading">
               <h3 class="panel-title">
                 <span class="glyphicon glyphicon-usd"></span>
-                  Remaining Balance
+                Remaining Balance
               </h3>
             </div>
             <div class="panel-body">
@@ -110,7 +108,50 @@
       <div class="col 2"></div>
 </div>
 
+  <table class="table">
+  <caption>
+    <p class="bg-secondary text-white">Saving Transaction Record</p>
+  </caption>
+  <thead>
+    <tr>
+      <th>Transaction Amount</th>
+      <th>Target/Source</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
 
+      {% if r[2] == '+' %}
+      <tr class="success">
+        <td>
+          <p style="color:green">+ ${{r[0].amount}}   </p>
+        </td>
+        <td>
+          {{r[1]}}
+        </td>
+        <td>
+          {{r[0].time}}
+        </td>
+        </tr>
+      {% else %}
+        <tr class="danger">
+        <td>
+          <p style="color:red">- ${{r[0].amount}}  </p>
+        </td>
+        <td>
+          {{r[1]}}
+        </td>
+        <td>
+          {{r[0].time}}
+        </td>
+          {% endif %}
+        </tr>
+
+    {% endfor %}
+  </tbody>
+  </table>
+  {% endif %}
 </div>
-{% endif %}
+
 {%endblock%}
