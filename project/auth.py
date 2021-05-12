@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 from random import randint
 import datetime
+import re
 
 auth = Blueprint('auth', __name__)
 
@@ -279,19 +280,24 @@ def deposit():
 @auth.route('/checking', methods=['GET', 'POST'])
 @login_required
 def checking():
-    if request.method == 'POST':
-        search_type = request.form.get('type')
-        search_val = request.form.get('val')
-        search_transaction = Transaction.query.get(search_val)
     checking_idx = -1
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'checking':
             checking_idx = i
-
     if checking_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='check')
     transactions = []
     transaction_list(transactions, current_user.accounts[checking_idx])
+    if request.method == 'POST':
+        search_type = request.form.get('type')
+        search_val = request.form.get('val')
+        trans_search, valid = search_list(transactions, search_type, search_val)
+        if not valid:
+            flash('Search input is invalid! Please try again!', category='error')
+            return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
+                                   records=transactions, flag='check')
+        return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
+                               records=trans_search, flag='check')
     return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
                            records=transactions, flag='check')
 
@@ -307,6 +313,16 @@ def saving():
         return render_template('account.html', user=current_user, account=None, records=None, flag='save')
     transactions = []
     transaction_list(transactions, current_user.accounts[saving_idx])
+    if request.method == 'POST':
+        search_type = request.form.get('type')
+        search_val = request.form.get('val')
+        trans_search, valid = search_list(transactions, search_type, search_val)
+        if not valid:
+            flash('Search input is invalid! Please try again!', category='error')
+            return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
+                                   records=transactions, flag='save')
+        return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
+                               records=trans_search, flag='save')
     return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
                            records=transactions, flag='save')
 
@@ -322,6 +338,16 @@ def credit():
         return render_template('account.html', user=current_user, account=None, records=None, flag='credit')
     transactions = []
     transaction_list(transactions, current_user.accounts[credit_idx])
+    if request.method == 'POST':
+        search_type = request.form.get('type')
+        search_val = request.form.get('val')
+        trans_search, valid = search_list(transactions, search_type, search_val)
+        if not valid:
+            flash('Search input is invalid! Please try again!', category='error')
+            return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
+                                   records=transactions, flag='credit')
+        return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
+                               records=trans_search, flag='credit')
     return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
                            records=transactions, flag='credit')
 
@@ -480,6 +506,37 @@ def transaction_list(transactions, account):
         else:
             pass
     transactions.sort(reverse=True, key=transaction_sort)
+
+
+def search_list(trans_list, filter_type, key):
+    res = []
+    if filter_type == 'amt':
+        try:
+            money = float(key)
+            for t in trans_list:
+                if t[0].amount == money:
+                    res.append(t)
+        except ValueError:
+            return res, False
+    elif filter_type == 'name':
+        for t in trans_list:
+            if re.split(': ', t[1])[1] == key:
+                res.append(t)
+    elif filter_type == 'src':
+        for t in trans_list:
+            if t[2] == '+':
+                if re.split(': ', t[1])[1] == key:
+                    res.append(t)
+    elif filter_type == 'tgt':
+        for t in trans_list:
+            if t[2] == '-':
+                if re.split(': ', t[1])[1] == key:
+                    res.append(t)
+    else:
+        for t in trans_list:
+            if t[4] == key:
+                res.append(t)
+    return res, True
 
 
 @auth.route('/recurring', methods=['GET', 'POST'])

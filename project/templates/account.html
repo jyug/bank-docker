@@ -101,24 +101,69 @@
     <p>You don't have a credit account yet, please contact the bank to open!</p>
     {% endif %}
 {% else %}
-<div class="row ">
-      <div class="col 2"></div>
-      <div class="col 8">
-        <div class="panel panel-info ">
-            <div class="panel-heading">
-              <h3 class="panel-title">
-                <span class="glyphicon glyphicon-usd"></span>
-                Remaining Balance
-              </h3>
-            </div>
-            <div class="panel-body">
 
-               ${{ account.balance }}
+    <div class="row">
+          <div class="col 1"></div>
+          <div class="col 8">
+            <div class="panel panel-info ">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-usd"></span>
+                    Remaining Balance
+                  </h3>
+                </div>
+                <div class="panel-body">
+
+                   ${{ account.balance }}
+                </div>
             </div>
-        </div>
-      </div>
-      <div class="col 2"></div>
-</div>
+          </div>
+          <div class="col 2"></div>
+    </div>
+    <div class="row">
+        {% if flag == 'check' %}
+        <form class="search" method="POST" action="/checking">
+            <input type="text" name="val">
+            <select id="filter1" name="type">
+                <option value="amt">Amount</option>
+                <option value="name">Name</option>
+                <option value="src">Source</option>
+                <option value="tgt">Target</option>
+                <option value="method">Method</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <form action="/checking"><button type="submit" class="btn btn-primary">Back</button></form>
+
+        {% elif flag == 'save' %}
+        <form class="search" method="POST" action="/saving">
+            <input type="text" name="val">
+            <select id="filter2" name="type">
+                <option value="amt">Amount</option>
+                <option value="name">Name</option>
+                <option value="src">Source</option>
+                <option value="tgt">Target</option>
+                <option value="method">Method</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <form action="/saving"><button type="submit" class="btn btn-primary">Back</button></form>
+        {% else %}
+        <form class="search" method="POST" action="/credit">
+            <input type="text" name="val">
+            <select id="filter3" name="type">
+                <option value="amt">Amount</option>
+                <option value="name">Name</option>
+                <option value="src">Source</option>
+                <option value="tgt">Target</option>
+                <option value="method">Method</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <form action="/credit"><button type="submit" class="btn btn-primary">Back</button></form>
+        {% endif %}
+    </div>
+
 
   <table class="table">
   <caption>
@@ -132,9 +177,11 @@
   </caption>
   <thead>
     <tr>
-      <th>Transaction Amount</th>
-      <th>Target/Source</th>
-      <th>Time</th>
+        <th>Transaction Amount</th>
+        <th>Target/Source</th>
+        <th>Method</th>
+        <th>Description</th>
+        <th>Time</th>
     </tr>
   </thead>
   <tbody>
