@@ -186,9 +186,9 @@ def open_account():
 @login_required
 def close_account():
     if request.method == 'POST':
-        checking = request.form.get('checking')
-        saving = request.form.get('saving')
-        credit = request.form.get('credit')
+        checking_flag = request.form.get('checking')
+        saving_flag = request.form.get('saving')
+        credit_flag = request.form.get('credit')
         customer_id = int(request.form.get('id'))
         customer = User.query.get(customer_id)
         # A list contain 3 integer 0/1 to indicate whether the customer has checking/saving/credit account
@@ -204,20 +204,20 @@ def close_account():
                 credit_idx = i
                 account_status[2] = 1
 
-        if checking:
+        if checking_flag:
             if account_status[0] == 1:
                 db.session.delete(customer.accounts[checking_idx])
 
             else:
                 flash('Not able to delete account that does not exist!', category='error')
                 return render_template('admin.html', user=current_user, customers=[customer], found=1)
-        if saving:
+        if saving_flag:
             if account_status[1] == 1:
                 db.session.delete(customer.accounts[saving_idx])
             else:
                 flash('Not able to delete account that does not exist!', category='error')
                 return render_template('admin.html', user=current_user, customers=[customer], found=1)
-        if credit:
+        if credit_flag:
             if account_status[2] == 1:
                 db.session.delete(customer.accounts[credit_idx])
             else:
@@ -279,17 +279,21 @@ def deposit():
 @auth.route('/checking', methods=['GET', 'POST'])
 @login_required
 def checking():
+    if request.method == 'POST':
+        search_type = request.form.get('type')
+        search_val = request.form.get('val')
+        search_transaction = Transaction.query.get(search_val)
     checking_idx = -1
     for i in range(len(current_user.accounts)):
         if current_user.accounts[i].type == 'checking':
             checking_idx = i
 
     if checking_idx == -1:
-        return render_template('checking.html', user=current_user, account=None, records=None)
+        return render_template('account.html', user=current_user, account=None, records=None, flag='check')
     transactions = []
     transaction_list(transactions, current_user.accounts[checking_idx])
-    return render_template('checking.html', user=current_user, account=current_user.accounts[checking_idx],
-                           records=transactions)
+    return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
+                           records=transactions, flag='check')
 
 
 @auth.route('/saving', methods=['GET', 'POST'])
@@ -300,11 +304,11 @@ def saving():
         if current_user.accounts[i].type == 'saving':
             saving_idx = i
     if saving_idx == -1:
-        return render_template('saving.html', user=current_user, account=None, records=None)
+        return render_template('account.html', user=current_user, account=None, records=None, flag='save')
     transactions = []
     transaction_list(transactions, current_user.accounts[saving_idx])
-    return render_template('saving.html', user=current_user, account=current_user.accounts[saving_idx],
-                           records=transactions)
+    return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
+                           records=transactions, flag='save')
 
 
 @auth.route('/credit', methods=['GET', 'POST'])
@@ -315,11 +319,11 @@ def credit():
         if current_user.accounts[i].type == 'credit':
             credit_idx = i
     if credit_idx == -1:
-        return render_template('credit.html', user=current_user, account=None, records=None)
+        return render_template('account.html', user=current_user, account=None, records=None, flag='credit')
     transactions = []
     transaction_list(transactions, current_user.accounts[credit_idx])
-    return render_template('credit.html', user=current_user, account=current_user.accounts[credit_idx],
-                           records=transactions)
+    return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
+                           records=transactions, flag='credit')
 
 
 @auth.route('/internal_trans', methods=['GET', 'POST'])
