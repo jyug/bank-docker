@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Saving Account{% endblock %}
+{% block title %}Credit Account{% endblock %}
 {%block nav%}
 <a class="navbar-brand" href="#">Good Day!
   {% if user.last_name == None %}
@@ -80,14 +80,26 @@
   <div class="row">
     <div class="col 4"></div>
     <div class="col 4">
-      <h1>Saving Account</h1>
+        {% if flag == 'check' %}
+        <h1>Checking Account</h1>
+        {% elif flag == 'save' %}
+        <h1>Saving Account</h1>
+        {% else %}
+        <h1>Credit Account</h1>
+        {% endif %}
     </div>
     <div class="col 4"></div>
   </div>
 
   <br>
 {% if account is none %}
-<p>You don't have a saving account yet, please contact the bank to open!</p>
+    {% if flag == 'check' %}
+    <p>You don't have a checking account yet, please contact the bank to open!</p>
+    {% elif flag == 'save' %}
+    <p>You don't have a saving account yet, please contact the bank to open!</p>
+    {% else %}
+    <p>You don't have a credit account yet, please contact the bank to open!</p>
+    {% endif %}
 {% else %}
 <div class="row ">
       <div class="col 2"></div>
@@ -110,7 +122,13 @@
 
   <table class="table">
   <caption>
-    <p class="bg-secondary text-white">Saving Transaction Record</p>
+      {% if flag == 'check' %}
+      <p class="bg-secondary text-white">Checking Transaction Record</p>
+      {% elif flag == 'save' %}
+      <p class="bg-secondary text-white">Saving Transaction Record</p>
+      {% else %}
+      <p class="bg-secondary text-white">Credit Transaction Record</p>
+      {% endif %}
   </caption>
   <thead>
     <tr>
@@ -165,5 +183,4 @@
   </table>
   {% endif %}
 </div>
-
 {%endblock%}
