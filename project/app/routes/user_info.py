@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from project.model.models import User, Account, Transaction
-from project.app import db
-from flask_login import current_user, login_required
+from flask_login import login_required
 
+from project.app import db
 from project.app.functions.functions import *
 
 user = Blueprint('user', __name__)
