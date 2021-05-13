@@ -2,14 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
-from .routes.views import views
-from .routes.auth import auth
-from .routes.admins import admins
-from .routes.user_info import user
-from .routes.account_management import manage
-from .routes.deposits import deposits
-from .routes.accounts import accounts
-from .routes.transactions import transaction
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
@@ -23,6 +15,15 @@ def create_app():
     app.config['SECRET_KEY'] = 'whats up'
     db.init_app(app)
 
+    from .routes.views import views
+    from .routes.auth import auth
+    from .routes.admins import admins
+    from .routes.user_info import user
+    from .routes.account_management import manage
+    from .routes.deposits import deposits
+    from .routes.accounts import accounts
+    from .routes.transactions import transaction
+
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(admins, url_prefix='/')
@@ -32,7 +33,7 @@ def create_app():
     app.register_blueprint(accounts, url_prefix='/')
     app.register_blueprint(transaction, url_prefix='/')
 
-    from project.model.models import User
+    from project.model.models import User, Account, Transaction
 
     # create_database(app)
 
