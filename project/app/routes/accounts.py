@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash
-from flask_login import current_user, login_required
+from flask_login import login_required
 from project.app.functions.functions import *
 
 accounts = Blueprint('accounts', __name__)
