@@ -31,6 +31,19 @@ def transaction_sort(e):
     return e[0].time
 
 
+def monthly_cash_flow(account):
+    month = datetime.datetime.now().month
+    income = 0
+    outcome = 0
+    for i in account.incomes:
+        if i.time.month == month:
+            income += i.amount
+    for p in account.payments:
+        if p.time.month == month:
+            outcome += p.amount
+    return income, outcome
+
+
 def transaction_list(transactions, account):
     time = datetime.datetime.now().replace(microsecond=0)
     # According to Google, 18 months is 547.501 days, so we take 547 days as the time difference boundary
