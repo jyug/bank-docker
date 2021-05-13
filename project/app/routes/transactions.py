@@ -37,17 +37,17 @@ def internal_trans():
             flash('Can not transfer between same accounts!', category='error')
             return render_template('internal_trans.html', user=current_user)
         else:
-            transaction = Transaction(type='internal', amount=money,
-                                      target_id=current_user.accounts[destination_idx].id,
-                                      source_id=current_user.accounts[source_idx].id,
-                                      time=datetime.datetime.now(),
-                                      description='Internal transfer')
+            trans = Transaction(type='internal', amount=money,
+                                target_id=current_user.accounts[destination_idx].id,
+                                source_id=current_user.accounts[source_idx].id,
+                                time=datetime.datetime.now(),
+                                description='Internal transfer')
 
-            current_user.accounts[source_idx].payments.append(transaction)
-            current_user.accounts[destination_idx].incomes.append(transaction)
+            current_user.accounts[source_idx].payments.append(trans)
+            current_user.accounts[destination_idx].incomes.append(trans)
             current_user.accounts[source_idx].balance -= money
             current_user.accounts[destination_idx].balance += money
-            db.session.add(transaction)
+            db.session.add(trans)
             db.session.commit()
             flash('Successfully issued an internal money transfer!', category='success')
             return render_template('internal_trans.html', user=current_user)
@@ -84,14 +84,14 @@ def wire():
                 if user.first_name == firstName and user.last_name == lastName:
                     for account in user.accounts:
                         if account.type == 'checking':
-                            transaction = Transaction(type=method, amount=money,
-                                                      target_id=account.id,
-                                                      source_id=current_user.accounts[source_idx].id,
-                                                      description=note,
-                                                      time=datetime.datetime.now())
+                            trans = Transaction(type=method, amount=money,
+                                                target_id=account.id,
+                                                source_id=current_user.accounts[source_idx].id,
+                                                description=note,
+                                                time=datetime.datetime.now())
 
-                            current_user.accounts[source_idx].payments.append(transaction)
-                            account.incomes.append(transaction)
+                            current_user.accounts[source_idx].payments.append(trans)
+                            account.incomes.append(trans)
 
                             if money > current_user.accounts[source_idx].balance:
                                 flash('You do not have enough money!', category='error')
@@ -99,7 +99,7 @@ def wire():
                             else:
                                 current_user.accounts[source_idx].balance -= money
                                 account.balance += money
-                                db.session.add(transaction)
+                                db.session.add(trans)
                                 db.session.commit()
                                 flash('Wire transfer complete!', category='success')
                                 return redirect(url_for('views.home'))

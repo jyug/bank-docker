@@ -2,220 +2,281 @@
 {% block title %}Home{% endblock %}
 {%block nav%}
 <a class="navbar-brand" href="#">Good Day!
-  {% if user.last_name == None %}
-  {{ user.first_name  + '!'}}
-  {% else %}
-  {{user.first_name + ' ' + user.last_name + '!'}}
-  {% endif %}</a>
-      <button
+    {% if user.last_name == None %}
+    {{ user.first_name + '!'}}
+    {% else %}
+    {{user.first_name + ' ' + user.last_name + '!'}}
+    {% endif %}
+</a>
+<button
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
-        data-target="#navbar"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+        data-target="#navbar1"
+>
+    <span class="navbar-toggler-icon"></span>
+</button>
 
-      <div class="collapse navbar-collapse" id="navbar">
-        <ul class="navbar-nav">
-          {% if user.id == 1 %}
-          <li class="nav-item active">
-          <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
-          </li>
-          <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="account1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Accounts
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="/checking">Checking Account</a>
-          <a class="dropdown-item" href="/saving">Saving Account</a>
-          <a class="dropdown-item" href="/credit">Credit Account</a>
-        </div>
-          </li>
-          </li>
-            <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="transaction1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Pay & Transfer
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
-          <a class="dropdown-item" href="/wire">Wire money</a>
-          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
-        </div>
-          </li>
-          {% else %}
-          <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Accounts
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="/checking">Checking Account</a>
-          <a class="dropdown-item" href="/saving">Saving Account</a>
-          <a class="dropdown-item" href="/credit">Credit Account</a>
-        </div>
-          </li>
-            <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Pay & Transfer
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
-          <a class="dropdown-item" href="/wire">Wire money</a>
-          <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
-        </div>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
+<div class="collapse navbar-collapse" id="navbar1">
+    <ul class="navbar-nav">
+        {% if user.id == 1 %}
+        <li class="nav-item active">
+            <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 {% endblock %}
 {% block content%}
-<div class="container">
+<div class="container-fluid" style="width: 70%">
+    {% set ns1 = namespace(checking_flag = 0) %}
+    {% set ns2 = namespace(saving_flag = 0) %}
+    {% set ns3 = namespace(credit_flag = 0) %}
 
-     <h2 class="text-body">Account Summary</h2>
-
-
-
-  {% set ns1 = namespace(checking_flag = 0) %}
-  {% set ns2 = namespace(saving_flag = 0) %}
-  {% set ns3 = namespace(credit_flag = 0) %}
-
-  {% for account in user.accounts %}
-    {% if account.type == 'checking' %}
+    <div class="row">
+        <div class="col-7" style="float:left;width: 60%;padding: 10px;">
+            {% for account in user.accounts %}
+            {% if account.type == 'checking' %}
 
 
-          <div class="row">
-            <div class="col 6">
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                      <a class="panel-title" href="/checking">
-                          CHECKING ACCOUNT
-                      </a>
-                  </div>
-                  <div class="panel-body">
-                      ${{account.balance}}
-                  </div>
-                </div>
-            </div>
-          </div>
-          {% set ns1.checking_flag = 1 %}
-
-      {% elif account.type == 'saving' %}
             <div class="row">
-                <div class="col 6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    SAVING ACCOUNT
-                                </h3>
-                        </div>
-                        <div class="panel-body">
-                                ${{account.balance}}
+                <div class="container" style="border-style: outset">
+                    <div class="row">
+                        <h5>SUPER COIN CHECKING({{account.number}})</h5>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <h6>Balance: ${{ account.balance }}</h6>
+                            </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Income: <span style="color:green">+${{ income[0] }}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Outcome: <span style="color:red">-${{ outcome[0] }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center"><a href="/checking">Account details</a></div>
                 </div>
             </div>
-              {% set ns2.saving_flag = 1 %}
-        {% elif account.type == 'credit' %}
+            <br/>
+            {% set ns1.checking_flag = 1 %}
+            {% elif account.type == 'saving' %}
             <div class="row">
-                 <div class="col 6">
-                        <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">
-                                        CREDIT ACCOUNT
-                                    </h3>
-                                </div>
-                                <div class="panel-body">
-                                    ${{account.balance}}
-                                </div>
+                <div class="container" style="border-style: outset">
+                    <div class="row">
+                        <h5>SUPER COIN SAVING({{account.number}})</h5>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <h6>Balance: ${{ account.balance }}</h6>
+                            </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Income: <span style="color:green">+${{ income[1] }}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Outcome: <span style="color:red">-${{ outcome[1] }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center"><a href="/saving">Account details</a></div>
                 </div>
+            </div>
+            <br/>
+            {% set ns2.saving_flag = 1 %}
+            {% elif account.type == 'credit' %}
+            <div class="row">
+                <div class="container" style="border-style: outset">
+                    <div class="row">
+                        <h5>SUPER COIN CREDIT({{account.number}})</h5>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <h6>Balance: ${{ account.balance }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Income: <span style="color:green">+${{ income[2] }}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="container">
+                                <p>Monthly Outcome: <span style="color:red">-${{ outcome[2] }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center"><a href="/credit">Account details</a></div>
                 </div>
-              {% set ns3.credit_flag = 1 %}
+            </div>
+            <br/>
+            {% set ns3.credit_flag = 1 %}
             {% endif %}
+            {% endfor %}
+            <div class="row">
+                {% if user.accounts|length == 0 %}
+                <div class="container">
+                    <h4 style="text-align:center;">You don't have an account yet, please contact the bank to open</h4>
+                </div>
+                {% else %}
+                <div class="container" style="border-style: outset">
+                    <caption>
+                        <b><p style="text-align:center;">Account activities</p></b>
+                    </caption>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Target/Source</th>
+                            <th>Method</th>
+                            <th>Description</th>
+                            <th>Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for r in records %}
+                        {% if r[2] == '+' %}
+                        <tr class="success">
+                            <td>
+                                <p style="color:green">+ ${{r[0].amount}} </p>
+                            </td>
+                            <td>
+                                {{r[1]}}
+                            </td>
+                            <td>
+                                {{r[4]}}
+                            </td>
+                            <td>
+                                {{r[5]}}
+                            </td>
+                            <td>
+                                {{r[0].time}}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="danger">
+                            <td>
+                                <p style="color:red">- ${{r[0].amount}} </p>
+                            </td>
+                            <td>
+                                {{r[1]}}
+                            </td>
+                            <td>
+                                {{r[4]}}
+                            </td>
+                            <td>
+                                {{r[5]}}
+                            </td>
+                            <td>
+                                {{r[0].time}}
+                            </td>
+                            {% endif %}
+                        </tr>
 
-
-{% endfor %}
-
-
-             {% if ns1.checking_flag == 0 %}
-                  <div class="row">
-                     <div class="col 6">
-                         <div class="panel panel-primary">
-                              <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    CHECKING ACCOUNT
-                                </h3>
-                              </div>
-                              <div class="panel-body">
-                                      N/A:    No Checking Account Available!
-                              </div>
-                        </div>
-                      </div>
-                    </div>
-              {% endif %}
-
-
-
-              {% if ns2.saving_flag == 0 %}
-                  <div class="row">
-                     <div class="col 6">
-                         <div class="panel panel-primary">
-                              <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    SAVING ACCOUNT
-                                </h3>
-                              </div>
-                              <div class="panel-body">
-                                      N/A:    No Saving Account Available!
-                              </div>
-                        </div>
-                      </div>
-                    </div>
-              {% endif %}
-
-
-
-              {% if ns3.credit_flag == 0 %}
-                  <div class="row">
-                     <div class="col 6">
-                         <div class="panel panel-primary">
-                              <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    CREDIT ACCOUNT
-                                </h3>
-                              </div>
-                              <div class="panel-body">
-                                    N/A:    No Credit Account Available!
-                              </div>
-                        </div>
-                      </div>
-                    </div>
-              {% endif %}
-
-
-
-
-
-
-
-
-
-  <div class="row">
-        <div class="col 12">
-          <div class="panel panel-primary">
-              <div class="panel-heading">
-                  <h3 class="panel-title">
-                      NEWS!!
-                  </h3>
-              </div>
-              <div class="panel-body">
-                  abcjdcjs
-              </div>
-          </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="/checking"><p style="text-align:center">See more transactions</p></a>
+                </div>
+                {% endif %}
+            </div>
         </div>
-  </div>
-
-
-
+        <div class="col-1">
+        </div>
+        <div class="col-4" style="float: left;width: 40%;padding: 10px;">
+            <div class="container">
+                <div class="row">
+                    <div class="container" style="border-style:outset">
+                        <div class="row"><h6>My info</h6></div>
+                        <div class="row justify-content-center">
+                            <p>{{user.first_name}} {{user.last_name}}</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>{{user.email}}</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <a href="/user_info"><p>Profile&Settings</p></a>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="container" style="border-style:outset">
+                        <h6>News</h6>
+                        <p>Dear Customer, We are very pleased to announce the opening of our Super Coin Bank today to meet the growing demand for our service.
+                            Our new business can be found at www.coinbank.com and will open at 8:00 A.M. Pacific and close at 6:00 P.M. Pacifif daily. We’d love to see you there.
+                            We have enclosed a voucher for 10% off any purchase for the first week we are open, which is also valid on our website, and we do hope you will use it and enjoy our [product / service].
+                            Thank You!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {%endblock%}

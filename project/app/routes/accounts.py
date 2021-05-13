@@ -16,6 +16,7 @@ def checking():
         return render_template('account.html', user=current_user, account=None, records=None, flag='check')
     transactions = []
     transaction_list(transactions, current_user.accounts[checking_idx])
+    income, outcome = monthly_cash_flow(current_user.accounts[checking_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')
         search_val = request.form.get('val')
@@ -23,11 +24,11 @@ def checking():
         if not valid:
             flash('Search input is invalid! Please try again!', category='error')
             return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
-                                   records=transactions, flag='check')
+                                   records=transactions, flag='check', income=income, outcome=outcome)
         return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
-                               records=trans_search, flag='check')
+                               records=trans_search, flag='check', income=income, outcome=outcome)
     return render_template('account.html', user=current_user, account=current_user.accounts[checking_idx],
-                           records=transactions, flag='check')
+                           records=transactions, flag='check', income=income, outcome=outcome)
 
 
 @accounts.route('/saving', methods=['GET', 'POST'])
@@ -41,6 +42,7 @@ def saving():
         return render_template('account.html', user=current_user, account=None, records=None, flag='save')
     transactions = []
     transaction_list(transactions, current_user.accounts[saving_idx])
+    income, outcome = monthly_cash_flow(current_user.accounts[saving_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')
         search_val = request.form.get('val')
@@ -48,11 +50,11 @@ def saving():
         if not valid:
             flash('Search input is invalid! Please try again!', category='error')
             return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
-                                   records=transactions, flag='save')
+                                   records=transactions, flag='save', income=income, outcome=outcome)
         return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
-                               records=trans_search, flag='save')
+                               records=trans_search, flag='save', income=income, outcome=outcome)
     return render_template('account.html', user=current_user, account=current_user.accounts[saving_idx],
-                           records=transactions, flag='save')
+                           records=transactions, flag='save', income=income, outcome=outcome)
 
 
 @accounts.route('/credit', methods=['GET', 'POST'])
@@ -66,6 +68,7 @@ def credit():
         return render_template('account.html', user=current_user, account=None, records=None, flag='credit')
     transactions = []
     transaction_list(transactions, current_user.accounts[credit_idx])
+    income, outcome = monthly_cash_flow(current_user.accounts[credit_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')
         search_val = request.form.get('val')
@@ -73,8 +76,8 @@ def credit():
         if not valid:
             flash('Search input is invalid! Please try again!', category='error')
             return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
-                                   records=transactions, flag='credit')
+                                   records=transactions, flag='credit', income=income, outcome=outcome)
         return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
-                               records=trans_search, flag='credit')
+                               records=trans_search, flag='credit', income=income, outcome=outcome)
     return render_template('account.html', user=current_user, account=current_user.accounts[credit_idx],
-                           records=transactions, flag='credit')
+                           records=transactions, flag='credit', income=income, outcome=outcome)
