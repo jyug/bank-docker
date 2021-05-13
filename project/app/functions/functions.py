@@ -88,18 +88,24 @@ def search_list(trans_list, filter_type, key):
             return res, False
     elif filter_type == 'name':
         for t in trans_list:
-            if re.split(': ', t[1])[1] == key:
-                res.append(t)
+            temp = re.split(': ', t[1])
+            if len(temp) > 1:
+                if temp[1] == key:
+                    res.append(t)
     elif filter_type == 'src':
         for t in trans_list:
             if t[2] == '+':
-                if re.split(': ', t[1])[1] == key:
-                    res.append(t)
+                temp = re.split(': ', t[1])
+                if len(temp) > 1:
+                    if temp[1] == key:
+                        res.append(t)
     elif filter_type == 'tgt':
         for t in trans_list:
             if t[2] == '-':
-                if re.split(': ', t[1])[1] == key:
-                    res.append(t)
+                temp = re.split(': ', t[1])
+                if len(temp) > 1:
+                    if temp[1] == key:
+                        res.append(t)
     else:
         for t in trans_list:
             if t[4] == key:
