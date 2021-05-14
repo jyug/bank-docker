@@ -15,8 +15,8 @@
     <br/>
     <h2 style="font-weight: bold">Search the user you wanna check</h2>
     <br/>
-        <form class="search" method="POST" action="/admin">
-            <input type="text" name="search">
+        <form class="search" method="POST" action="/admin" id="op">
+            <input type="text" name="search" id="userFind">
             <select id="filter" name="field">
                 <option value="firstName">First name</option>
                 <option value="lastName">Last name</option>
@@ -25,6 +25,36 @@
             </select>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
+<!--        <script>-->
+<!--        var form = document.getElementById('op')-->
+<!--        form.addEventListener('submit',function(e){-->
+<!--        e.preventDefault()-->
+<!--        var user = document.getElementById('userFind').value-->
+<!--        var option = document.getElementById('filter').value-->
+<!--        fetch("http://127.0.0.1:5000/admin", {-->
+<!--            method: 'POST',-->
+<!--            body: JSON.stringify({-->
+<!--                search: user,-->
+<!--                field: option-->
+<!--            }),-->
+<!--            headers:{-->
+<!--                "Content-Type":"application/json; charset=UTF-8"-->
+<!--            }-->
+<!--        })-->
+<!--        .then(function(response){-->
+<!--            e.preventDefault()-->
+<!--            var url = "http://127.0.0.1:5000/admin"-->
+<!--            window.location = url-->
+<!--            console.log(response)-->
+<!--            console.log(re)-->
+<!--        })-->
+<!--        .then(function(data){-->
+<!--            console.log("hll")-->
+<!--            console.log(data)-->
+<!--        })-->
+<!--    })-->
+
+<!--        </script>-->
         <div class="container">
             {% if found == 0 %}
             <p style="font-weight:bold">No such user!</p>
@@ -52,8 +82,8 @@
                     {% endif %}
                     </br>
 
-                        <form method="POST" action="/account_management">
-                            <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
+                        <form method="POST" action="/account_management" id="goto_account_management">
+                            <button name="id" type="submit" class="btn btn-primary" value={{c.id}} id="open">Open account</button>
                         </form>
                         <br/>
                         <form method="POST" action="/deposit_info">
@@ -79,4 +109,7 @@
         </div>
     </form>
 </div>
+
+
+
 {% endblock %}

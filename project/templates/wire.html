@@ -76,7 +76,7 @@
 {% endblock %}
 {% block content%}
 <div class="container">
-    <form method="POST">
+    <form method="POST" id="wire">
     <h3 align="center">Wire Transfer</h3>
         <br>
 
@@ -157,4 +157,44 @@
 </form>
 
 </div>
+
+
+<script>
+    var form = document.getElementById('wire')
+    form.addEventListener('submit',function(e){
+        e.preventDefault()
+        var name1 = document.getElementById('name').value
+        var email1 = document.getElementById('email').value
+        var money1 = document.getElementById('money').value
+        var note1 = document.getElementById('note').value
+        var method1 = document.getElementById('method').value
+
+
+
+        fetch("http://127.0.0.1:5000/wire", {
+            method: 'POST',
+            body: JSON.stringify({
+
+                name: name1,
+                email: email1,
+                money: money1,
+                note: note1,
+                method: method1
+
+            }),
+            headers:{
+                "Content-Type":"application/json; charset=UTF-8"
+            }
+        })
+        .then(function(response){
+            var url = "http://127.0.0.1:5000"
+            window.location = url
+            console.log(response)
+        })
+        .then(function(data){
+            console.log("hll")
+            console.log(data)
+        })
+    })
+</script>
 {%endblock%}
