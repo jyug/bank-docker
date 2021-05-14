@@ -1,7 +1,7 @@
 ## CMPE 202 Team 13 Weekly Scrum Report
 ## Team Member: Jinfan Zhang, Cong Li, Xuan Shi
 
-*Team 13, Sprint #1 *
+*Team 13, Sprint #1*
 Scurm Manager: Xuan Shi
 Communication on frontend & backend technologies.
 **Team Member Name**
