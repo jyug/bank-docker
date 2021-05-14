@@ -15,7 +15,7 @@ def home():
         income, outcome = monthly_cash_flow(a)
         incomes.append(income)
         outcomes.append(outcome)
-        transaction_list(transactions, a)
+        transaction_list(transactions, a, 'home')
     transactions = transactions[:10]
     return render_template('home.html', user=current_user, records=transactions, income=incomes, outcome=outcomes)
 

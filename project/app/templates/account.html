@@ -1,5 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Credit Account{% endblock %}
+{% block title %}
+{% if flag == 'check' %}
+Checking Account
+{% elif flag == 'save' %}
+Saving Account
+{% else %}
+Credit Account
+{% endif %}
+{% endblock %}
 {%block nav%}
 <a class="navbar-brand" href="#">Good Day!
     {% if user.last_name == None %}
@@ -218,7 +226,7 @@
             {% for r in records %}
 
             {% if r[2] == '+' %}
-            <tr class="success">
+            <tr class="table-success">
                 <td>
                     <p style="color:green">+ ${{r[0].amount}} </p>
                 </td>
@@ -236,7 +244,7 @@
                 </td>
             </tr>
             {% else %}
-            <tr class="danger">
+            <tr class="table-danger">
                 <td>
                     <p style="color:red">- ${{r[0].amount}} </p>
                 </td>

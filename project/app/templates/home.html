@@ -193,15 +193,13 @@
                         <tr>
                             <th>Amount</th>
                             <th>Target/Source</th>
-                            <th>Method</th>
-                            <th>Description</th>
                             <th>Time</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for r in records %}
                         {% if r[2] == '+' %}
-                        <tr class="success">
+                        <tr class="table-success">
                             <td>
                                 <p style="color:green">+ ${{r[0].amount}} </p>
                             </td>
@@ -209,28 +207,16 @@
                                 {{r[1]}}
                             </td>
                             <td>
-                                {{r[4]}}
-                            </td>
-                            <td>
-                                {{r[5]}}
-                            </td>
-                            <td>
                                 {{r[0].time}}
                             </td>
                         </tr>
                         {% else %}
-                        <tr class="danger">
+                        <tr class="table-danger">
                             <td>
                                 <p style="color:red">- ${{r[0].amount}} </p>
                             </td>
                             <td>
                                 {{r[1]}}
-                            </td>
-                            <td>
-                                {{r[4]}}
-                            </td>
-                            <td>
-                                {{r[5]}}
                             </td>
                             <td>
                                 {{r[0].time}}

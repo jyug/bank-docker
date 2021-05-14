@@ -15,7 +15,7 @@ def checking():
     if checking_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='check')
     transactions = []
-    transaction_list(transactions, current_user.accounts[checking_idx])
+    transaction_list(transactions, current_user.accounts[checking_idx], 'checking')
     income, outcome = monthly_cash_flow(current_user.accounts[checking_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')
@@ -41,7 +41,7 @@ def saving():
     if saving_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='save')
     transactions = []
-    transaction_list(transactions, current_user.accounts[saving_idx])
+    transaction_list(transactions, current_user.accounts[saving_idx], 'saving')
     income, outcome = monthly_cash_flow(current_user.accounts[saving_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')
@@ -67,7 +67,7 @@ def credit():
     if credit_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='credit')
     transactions = []
-    transaction_list(transactions, current_user.accounts[credit_idx])
+    transaction_list(transactions, current_user.accounts[credit_idx], 'credit')
     income, outcome = monthly_cash_flow(current_user.accounts[credit_idx])
     if request.method == 'POST':
         search_type = request.form.get('type')

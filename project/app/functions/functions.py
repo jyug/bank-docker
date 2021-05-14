@@ -44,7 +44,7 @@ def monthly_cash_flow(account):
     return income, outcome
 
 
-def transaction_list(transactions, account):
+def transaction_list(transactions, account, flag):
     time = datetime.datetime.now().replace(microsecond=0)
     # According to Google, 18 months is 547.501 days, so we take 547 days as the time difference boundary
     eighteen_months = datetime.timedelta(days=547)
@@ -124,3 +124,61 @@ def search_list(trans_list, filter_type, key):
             if t[4] == key:
                 res.append(t)
     return res, True
+
+
+def weekday_calculator(date_arr):
+    return datetime.date(int(date_arr[0]), int(date_arr[1]), int(date_arr[2])).strftime('%a').lower()
+
+
+def datetime_str(date_arr):
+    return datetime.date(int(date_arr[0]), int(date_arr[1]), int(date_arr[2]))
+
+
+def name_splitter(name):
+    name_arr = name.split()
+    if len(name_arr) > 1:
+        return name_arr[0], name_arr[1]
+    else:
+        return name_arr[0], ''
+
+
+def source_index(user, method):
+    source_idx = -1
+    account_type = 'checking'
+    if method == 'credit':
+        account_type = 'credit'
+    for i in range(len(user.accounts)):
+        if user.accounts[i].type == account_type:
+            source_idx = i
+    return source_idx
+
+
+def target_account(email, first_name, last_name):
+    users = User.query.all()
+    for user in users:
+        if user.email == email:
+            if user.first_name == first_name and user.last_name == last_name:
+                for account in user.accounts:
+                    if account.type == 'checking':
+                        return account, 'valid'
+            else:
+                return None, 'wrong name'
+    return None, 'no email'
+
+
+def internal_validation(source, destination, user):
+    source_idx = -1
+    destination_idx = -1
+    for i in range(len(user.accounts)):
+        if user.accounts[i].type == source:
+            source_idx = i
+        if user.accounts[i].type == destination:
+            destination_idx = i
+    if source_idx == -1 or destination_idx == -1:
+        if source_idx == -1:
+            return source_idx, destination_idx, 'no source'
+        else:
+            return source_idx, destination_idx, 'no target'
+    if source_idx == destination_idx:
+        return source_idx, destination_idx, 'same account'
+    return source_idx, destination_idx, 'no error'

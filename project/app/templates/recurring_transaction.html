@@ -1,9 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Checking Account{% endblock %}
+{% block title %}Recurring Transfer{% endblock %}
 {%block nav%}
-
-
-<a class="navbar-brand" href="#">Good Day!
+<a class="navbar-brand" href="/">Good Day!
     {% if user.last_name == None %}
     {{ user.first_name + '!'}}
     {% else %}
@@ -82,31 +80,40 @@
 {% endblock %}
 {% block content%}
 <div class="container">
+    <form method="POST">
+        <br/>
+        <div class="container"><h3 align="left">Recurring Transfer</h3></div>
+        <br>
 
-    <h3 align="center">Internal Transfer</h3>
-    <br>
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col 4"></div>
-                <p class="font-italic text-body font-weight-bolder">ACCOUNT BALANCE</p>
-                <div class="col 4"></div>
-            </div>
+        <div class="container">
+            <div class="container"><label for="t"><h6 class="font-italic text-body font-weight-bolder">BALANCE: </h6>
+            </label></div>
+            <table class="table" id="t">
+                <th>Account Type</th>
+                <th>Balance Remaining</th>
+                {% for account in user.accounts %}
+                <tr>
+                    <td>{{account.type}}</td>
+                    <td>${{account.balance}}</td>
+                </tr>
+
+                {% endfor %}
+            </table>
         </div>
-        <table class="table">
-            <th>Account Type</th>
-            <th>Balance Remaining</th>
-            {% for account in user.accounts %}
-            <tr>
-                <td>{{account.type}}</td>
-                <td>${{account.balance}}</td>
-            </tr>
+        <div class="container">
+            <form action="/recurring">
+                <p>What would you like to do?</p>
+                <input type="radio" id="internal" name="method" value="internal">
+                <label for="internal">Recurring Internal Transfer</label><br>
+                <input type="radio" id="wire" name="method" value="wire">
+                <label for="wire">Recurring Wire Transfer</label><br>
+                <input type="radio" id="cancel" name="method" value="cancel">
+                <label for="cancel">Cancel ongoing recurring task</label><br>
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+            <br/>
+        </div>
+    </form>
 
-            {% endfor %}
-        </table>
-    </div>
-    <br>
 </div>
-
-
 {%endblock%}

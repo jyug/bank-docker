@@ -2,8 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from flask_apscheduler import APScheduler
 
 db = SQLAlchemy()
+scheduler = APScheduler()
 DB_NAME = "database.db"
 
 
@@ -33,9 +35,9 @@ def create_app():
     app.register_blueprint(accounts, url_prefix='/')
     app.register_blueprint(transaction, url_prefix='/')
 
-    from project.model.models import User, Account, Transaction
+    from project.model.models import User
 
-    # create_database(app)
+    #create_database(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
