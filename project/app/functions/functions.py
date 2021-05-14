@@ -51,7 +51,7 @@ def transaction_list(transactions, account, flag):
     if flag == 'home':
         iteration_pay = 0
         iteration_income = 0
-        for p in account.payments:
+        for p in reversed(account.payments):
             try:
                 target = User.query.get(Account.query.get(p.target_id).user_id)
                 t_type = Account.query.get(p.target_id).type
@@ -72,7 +72,7 @@ def transaction_list(transactions, account, flag):
                 transactions.append((p, notation, '-', t_type, p.type, p.description))
             else:
                 pass
-        for i in account.incomes:
+        for i in reversed(account.incomes):
             try:
                 source = User.query.get(Account.query.get(i.source_id).user_id)
                 s_type = Account.query.get(i.source_id).type
