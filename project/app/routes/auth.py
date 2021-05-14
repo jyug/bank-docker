@@ -62,36 +62,6 @@ def logout():
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
-    # if request.method == 'POST':
-    #     username = request.form.get('username')
-    #     email = request.form.get('email')
-    #     firstName = request.form.get('firstName')
-    #     lastName = request.form.get('lastName')
-    #     password1 = request.form.get('password1')
-    #     password2 = request.form.get('password2')
-    #     u1 = User.query.filter_by(username=username).first()
-    #     u2 = User.query.filter_by(email=email).first()
-    #     if u1:
-    #         flash('Username has already been taken!', category='error')
-    #     elif u2:
-    #         flash('Email has already been taken!', category='error')
-    #     elif len(email) < 4:
-    #         flash('Email should be longer!', category='error')
-    #     elif password1 != password2:
-    #         flash('Passwords not match', category='error')
-    #     elif len(password1) < 7:
-    #         flash('password should be longer!', category='error')
-    #     else:
-    #         # add user to database.
-    #         new_user = User(last_name=lastName, first_name=firstName, email=email, password=password2,
-    #                         username=username)
-    #         db.session.add(new_user)
-    #         db.session.commit()
-    #         login_user(new_user, remember=True)
-    #         flash('Account created! Welcome ' + new_user.first_name + '!', category='success')
-    #         return redirect(url_for('views.home'))
-    #
-    # return render_template('signUp.html', user=current_user)
     if request.method == 'POST':
         if not request.is_json:
             return make_response({'msg': "no json"}), 200
@@ -130,8 +100,5 @@ def sign_up():
             login_user(new_user, remember=True)
             flash('Account created! Welcome ' + new_user.first_name + '!', category='success')
             return make_response(redirect(url_for('views.home'))), 302
-            # return redirect(url_for('views.home'))
     else:
         return make_response(render_template('signUp.html', user=current_user))
-    # return render_template('signUp.html', user=current_user)
-
