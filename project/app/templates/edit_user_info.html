@@ -5,7 +5,7 @@
 {% endblock %}
 {%block content%}
 <div class="container">
-    <form method="POST">
+    <form method="POST" id="edit">
         <div class="form-group">
             <label for="firstName">First Name</label>
             <input
@@ -61,4 +61,41 @@
         <button onclick="location.href='/user_info'" type="button" class="btn btn-primary">Cancel</button>
     </form>
 </div>
+<script>
+   var form = document.getElementById('edit')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var address1 = document.getElementById('address').value
+       var firstname1 = document.getElementById('firstName').value
+       var lastname1 = document.getElementById('lastName').value
+       var password11 = document.getElementById('password1').value
+       var password21 = document.getElementById('password2').value
+
+       fetch("http://127.0.0.1:5000/edit_user_info", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               firstName: firstname1,
+               lastName: lastname1,
+               password1: password11,
+               password2: password21,
+               address:address1
+
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/user_info"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
 {% endblock %}

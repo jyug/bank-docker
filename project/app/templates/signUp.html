@@ -5,7 +5,7 @@
 {% endblock %}
 {%block content%}
 <div class="container">
-    <form method="POST">
+    <form method="POST" id="myform">
         <h3 align="center">Sign Up</h3>
         <div class="form-group">
             <label for="username">Username</label>
@@ -71,4 +71,44 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+<script>
+   var form = document.getElementById('myform')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var username1 = document.getElementById('username').value
+       var email1 = document.getElementById('email').value
+       var firstname1 = document.getElementById('firstName').value
+       var lastname1 = document.getElementById('lastName').value
+       var password11 = document.getElementById('password1').value
+       var password21 = document.getElementById('password2').value
+
+
+
+       fetch("http://127.0.0.1:5000/sign-up", {
+           method: 'POST',
+           body: JSON.stringify({
+               username:username1,
+               email:email1,
+               firstName: firstname1,
+               lastName: lastname1,
+               password1: password11,
+               password2: password21
+
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
 {% endblock %}
