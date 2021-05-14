@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Internal Transfer{% endblock %}
+{%block nav%}
+<a class="navbar-brand" href="/">Good Day!
+    {% if user.last_name == None %}
+    {{ user.first_name + '!'}}
+    {% else %}
+    {{user.first_name + ' ' + user.last_name + '!'}}
+    {% endif %}</a>
+<button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar1"
+>
+    <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbar1">
+    <ul class="navbar-nav">
+        {% if user.id == 1 %}
+        <li class="nav-item active">
+            <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-item nav-link" id="home" href="/">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block content%}
+<div class="container">
+    <form method="POST" id="internal">
+        <br/>
+        <div class="container"><h3>Internal Transfer</h3></div>
+        <br>
+        <div class="container">
+            <div class="container"><label for="t"><h6 class="font-italic text-body font-weight-bolder">BALANCE: </h6>
+            </label></div>
+            <table class="table" id="t">
+                <th>Account Type</th>
+                <th>Balance Remaining</th>
+                {% for account in user.accounts %}
+                <tr>
+                    <td>{{account.type}}</td>
+                    <td>${{account.balance}}</td>
+                </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+        <br>
+        <div class="container">
+            <div class="form-group">
+                <label>From: </label>
+                <select id="source" name="source">
+                    <option value="checking">Checking Account</option>
+                    <option value="saving">Saving Account</option>
+                    <option value="credit">Credit Account</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>To: </label>
+                <select id="destination" name="destination">
+                    <option value="checking">Checking Account</option>
+                    <option value="saving">Saving Account</option>
+                    <option value="credit">Credit Account</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Amount: </label>
+                <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        id="money"
+                        name="money"
+                        placeholder="Enter the money amount"
+                />
+            </div>
+
+            <br/>
+            <button type="submit" class="btn btn-primary">Issue transfer</button>
+        </div>
+    </form>
+
+</div>
+<script>
+   var form = document.getElementById('internal')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var source1 = document.getElementById('source').value
+       var destination1 = document.getElementById('destination').value
+       var money1 = document.getElementById('money').value
+
+       fetch("http://127.0.0.1:5000/internal_trans", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               source: source1,
+               destination: destination1,
+               money: money1,
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
+{%endblock%}

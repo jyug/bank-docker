@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Wire Transfer{% endblock %}
+{%block nav%}
+<a class="navbar-brand" href="/">Good Day!
+    {% if user.last_name == None %}
+    {{ user.first_name + '!'}}
+    {% else %}
+    {{user.first_name + ' ' + user.last_name + '!'}}
+    {% endif %}</a>
+<button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar1"
+>
+    <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbar1">
+    <ul class="navbar-nav">
+        {% if user.id == 1 %}
+        <li class="nav-item active">
+            <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-item nav-link" id="home" href="/">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block content%}
+<div class="container">
+    <form method="POST" id="wire">
+        <br/>
+        <div class="container"><h3 align="left">Wire Transfer</h3></div>
+        <br>
+
+        <div class="container">
+            <div class="container"><label for="t"><h6 class="font-italic text-body font-weight-bolder">BALANCE: </h6>
+            </label></div>
+            <table class="table">
+                <th>Account Type</th>
+                <th>Balance Remaining</th>
+                {% for account in user.accounts %}
+                <tr>
+                    <td>{{account.type}}</td>
+                    <td>${{account.balance}}</td>
+                </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+        <div class="container">
+            <div class="form-group">
+                <label>Name: </label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Enter the name of user you want to transfer money to"
+                />
+            </div>
+            <div class="form-group">
+                <label>Email: </label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="Enter the email of that user"
+                />
+            </div>
+            <div class="form-group">
+                <label>Amount: </label>
+                <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        id="money"
+                        name="money"
+                        placeholder="Enter the money amount"
+                />
+            </div>
+            <div class="form-group">
+                <label>Description: </label>
+                <input
+                        type="text"
+                        class="form-control"
+                        id="note"
+                        name="note"
+                        placeholder="Enter the description"
+                />
+            </div>
+            <div class="form-group">
+                <label>Method: </label>
+                <select id="method" name="method">
+                    <option value="credit">Credit</option>
+                    <option value="debit">Debit</option>
+                    <option value="check">Check</option>
+                    <option value="fee">Fee</option>
+                </select>
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-primary">Issue transfer</button>
+        </div>
+    </form>
+
+</div>
+<script>
+   var form = document.getElementById('wire')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var name1 = document.getElementById('name').value
+       var email1 = document.getElementById('email').value
+       var money1 = document.getElementById('money').value
+       var note1 = document.getElementById('note').value
+       var method1 = document.getElementById('method').value
+
+
+       fetch("http://127.0.0.1:5000/wire", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               name: name1,
+               email: email1,
+               money: money1,
+               note: note1,
+               method: method1
+
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
+{%endblock%}

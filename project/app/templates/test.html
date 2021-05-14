@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content%}
+
+
+<div class="container">
+
+    <div class="row">
+        <div class="col 6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        checking
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    $20000
+                </div>
+            </div>
+        </div>
+
+        <div class="col 6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        saving
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    $70000
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col 6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        credit
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    $20000
+                </div>
+            </div>
+        </div>
+
+        <div class="col 6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        news
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    $70000
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+{%endblock%}
+
+
+{% for account in user.accounts %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {{account.type}}
+                </h3>
+            </div>
+            <div class="panel-body">
+                ${{account.balance}}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% block title %}
+{% if flag == 'check' %}
+Checking Account
+{% elif flag == 'save' %}
+Saving Account
+{% else %}
+Credit Account
+{% endif %}
+{% endblock %}
+{%block nav%}
+<a class="navbar-brand" href="#">Good Day!
+    {% if user.last_name == None %}
+    {{ user.first_name + '!'}}
+    {% else %}
+    {{user.first_name + ' ' + user.last_name + '!'}}
+    {% endif %}</a>
+<button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar1"
+>
+    <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbar1">
+    <ul class="navbar-nav">
+        {% if user.id == 1 %}
+        <li class="nav-item active">
+            <a class="nav-item nav-link" id="admin" href="/admin" style="font-weight:bold">Administration Section</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction1" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="account" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Accounts
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/checking">Checking Account</a>
+                <a class="dropdown-item" href="/saving">Saving Account</a>
+                <a class="dropdown-item" href="/credit">Credit Account</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="transaction" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                Pay & Transfer
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/internal_trans">Internal transfer</a>
+                <a class="dropdown-item" href="/wire">Wire money</a>
+                <a class="dropdown-item" href="/recurring">Recurring Transfer</a>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="collapse navbar-collapse justify-content-end" id="navbar">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-item nav-link" id="home" href="/">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block content%}
+<div class="container">
+    <br>
+    {% if account is none %}
+    {% if flag == 'check' %}
+    <p>You don't have a checking account yet, please contact the bank to open!</p>
+    {% elif flag == 'save' %}
+    <p>You don't have a saving account yet, please contact the bank to open!</p>
+    {% else %}
+    <p>You don't have a credit account yet, please contact the bank to open!</p>
+    {% endif %}
+    {% else %}
+
+    <div class="row">
+        <div class="container" style="border-style: outset">
+            <div class="row">
+                {% if account.type == 'checking' %}
+                <h5>SUPER COIN CHECKING({{account.number}})</h5>
+                {% elif account.type == 'saving' %}
+                <h5>SUPER COIN SAVING({{account.number}})</h5>
+                {% else %}
+                <h5>SUPER COIN CREDIT({{account.number}})</h5>
+                {% endif %}
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="container">
+                        <h6>Balance: ${{ account.balance }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="container">
+                        <p>Monthly Income: <span style="color: green">+${{income}}</span></p>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="container">
+                        <p>Monthly Outcome: <span style="color: red">-${{outcome}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col 2"></div>
+    </div>
+    <br/>
+    <div class="row">
+
+        {% if flag == 'check' %}
+        <div class="column">
+            <form class="search" method="POST" action="/checking">
+                <label for="filter1"><h6>Transaction Search: </h6></label>
+                <input type="text" name="val">
+                <select id="filter1" name="type">
+                    <option value="amt">Amount</option>
+                    <option value="name">Name</option>
+                    <option value="src">Source</option>
+                    <option value="tgt">Target</option>
+                    <option value="method">Method</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="/checking">
+                <button type="submit" class="btn btn-primary">Back</button>
+            </form>
+        </div>
+
+        {% elif flag == 'save' %}
+        <div class="column">
+            <form class="search" method="POST" action="/saving">
+                <label for="filter2"><h6>Transaction Search: </h6></label>
+                <input type="text" name="val">
+                <select id="filter2" name="type">
+                    <option value="amt">Amount</option>
+                    <option value="name">Name</option>
+                    <option value="src">Source</option>
+                    <option value="tgt">Target</option>
+                    <option value="method">Method</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="/saving">
+                <button type="submit" class="btn btn-primary">Back</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="column">
+            <form class="search" method="POST" action="/credit">
+                <label for="filter3"><h6>Transaction Search: </h6></label>
+                <input type="text" name="val">
+                <select id="filter3" name="type">
+                    <option value="amt">Amount</option>
+                    <option value="name">Name</option>
+                    <option value="src">Source</option>
+                    <option value="tgt">Target</option>
+                    <option value="method">Method</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-3">
+            <form action="/credit">
+                <button type="submit" class="btn btn-primary">Back</button>
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
+    <br/>
+
+    <div class="container" style="border-style: outset">
+        <table class="table">
+            <caption>
+                {% if flag == 'check' %}
+                <p class="bg-secondary text-white">Checking Transaction Record</p>
+                {% elif flag == 'save' %}
+                <p class="bg-secondary text-white">Saving Transaction Record</p>
+                {% else %}
+                <p class="bg-secondary text-white">Credit Transaction Record</p>
+                {% endif %}
+            </caption>
+            <thead>
+            <tr>
+                <th>Transaction Amount</th>
+                <th>Target/Source</th>
+                <th>Method</th>
+                <th>Description</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in records %}
+
+            {% if r[2] == '+' %}
+            <tr class="table-success">
+                <td>
+                    <p style="color:green">+ ${{r[0].amount}} </p>
+                </td>
+                <td>
+                    {{r[1]}}
+                </td>
+                <td>
+                    {{r[4]}}
+                </td>
+                <td>
+                    {{r[5]}}
+                </td>
+                <td>
+                    {{r[0].time}}
+                </td>
+            </tr>
+            {% else %}
+            <tr class="table-danger">
+                <td>
+                    <p style="color:red">- ${{r[0].amount}} </p>
+                </td>
+                <td>
+                    {{r[1]}}
+                </td>
+                <td>
+                    {{r[4]}}
+                </td>
+                <td>
+                    {{r[5]}}
+                </td>
+                <td>
+                    {{r[0].time}}
+                </td>
+                {% endif %}
+            </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{%endblock%}
