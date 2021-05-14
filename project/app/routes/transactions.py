@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response, jsonify
 from flask_login import login_required
 from project.app import db
 from project.app.functions.functions import *
@@ -12,33 +12,45 @@ transaction = Blueprint('transaction', __name__)
 @login_required
 def internal_trans():
     if request.method == 'POST':
-        money = float(request.form.get('money'))
+        if not request.is_json:
+            return make_response({'msg': "no json"}), 200
+        req = request.get_json()
+        money = float(req.get('money'))
         if money <= 0:
             flash('Invalid money amount!', category='error')
-            return render_template('internal_trans.html', user=current_user)
-        source = request.form.get('source')
-        destination = request.form.get('destination')
+            # return render_template('internal_trans.html', user=current_user)
+            return make_response(render_template('internal_trans.html', user=current_user), 400)
+        source = req.get('source')
+        destination = req.get('destination')
         source_idx, destination_idx, error = internal_validation(source, destination, current_user)
         if error == 'no source':
             flash('You do not have a ' + source + ' account yet, not able to issue transaction!',
                   category='error')
-            return render_template('internal_trans.html', user=current_user)
+            # return render_template('internal_trans.html', user=current_user)
+            return make_response(render_template('internal_trans.html', user=current_user), 400)
+
         elif error == 'no target':
             flash('You do not have a ' + destination + ' account yet, not able to issue transaction!',
                   category='error')
-            return render_template('internal_trans.html', user=current_user)
+            # return render_template('internal_trans.html', user=current_user)
+            return make_response(render_template('internal_trans.html', user=current_user), 400)
+
         elif error == 'same account':
             flash('Can not transfer between same accounts!', category='error')
-            return render_template('internal_trans.html', user=current_user)
+            # return render_template('internal_trans.html', user=current_user)
+            return make_response(render_template(url_for('views.home')), 400)
         else:
             if money > current_user.accounts[source_idx].balance:
                 flash('You do not have enough money!', category='error')
-                return render_template('internal_trans.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 400)
+                # return render_template('internal_trans.html', user=current_user)
             transaction_generator(current_user.accounts[source_idx],
                                   current_user.accounts[destination_idx], money, 'Internal transfer', 'internal')
             flash('Successfully issued an internal money transfer!', category='success')
-            return render_template('internal_trans.html', user=current_user)
-    return render_template('internal_trans.html', user=current_user)
+            return make_response(redirect(url_for('views.home')), 200)
+            # return render_template('internal_trans.html', user=current_user)
+    return make_response(render_template('internal_trans.html', user=current_user), 200)
+    # return render_template('internal_trans.html', user=current_user)
 
 
 @transaction.route('/re_internal', methods=['GET', 'POST'])
@@ -84,39 +96,42 @@ def re_internal():
 @login_required
 def wire():
     if request.method == 'POST':
-        money = float(request.form.get('money'))
+        if not request.is_json:
+            return make_response({'msg': "no json"}), 200
+        req = request.get_json()
+        money = float(req.get('money'))
         if money <= 0:
             flash('Invalid money amount!', category='error')
-            return render_template('wire.html', user=current_user)
-        name = request.form.get('name')
+            return make_response(render_template('wire.html', user=current_user), 400)
+        name = req.get('name')
+        email = req.get('email')
+        note = req.get('note')
+        method = req.get('method')
         firstName, lastName = name_splitter(name)
-        email = request.form.get('email')
-        note = request.form.get('note')
-        method = request.form.get('method')
         source_idx = source_index(current_user, method)
         if source_idx not in [0, 1, 2]:
             flash('You do not have a checking account yet, please contact the bank to open!', category='error')
-            return redirect(url_for('views.home'))
+            return make_response(redirect(url_for('views.home')), 400)
         account, flag = target_account(email, firstName, lastName)
         if flag == 'no email':
             flash('Email not found! No such user!', category='error')
-            return render_template('wire.html', user=current_user)
+            return make_response(render_template('wire.html', user=current_user), 400)
         elif flag == 'wrong name':
             flash('Incorrect name! Not able to issue the wire transfer!', category='error')
-            return render_template('wire.html', user=current_user)
+            return make_response(redirect(url_for('views.home')), 400)
         elif not account:
             flash('The target user do not have a checking account yet, unable to issue the transfer!',
                   category='error')
-            return redirect(url_for('views.home'))
+            return make_response(redirect(url_for('views.home')), 400)
         else:
             if money > current_user.accounts[source_idx].balance:
                 flash('You do not have enough money!', category='error')
-                return render_template('wire.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 400)
             else:
                 transaction_generator(current_user.accounts[source_idx], account, money, note, method)
                 flash('Wire transfer complete!', category='success')
-                return redirect(url_for('views.home'))
-    return render_template('wire.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 200)
+    return make_response(render_template('wire.html', user=current_user), 200)
 
 
 @transaction.route('/re_wire', methods=['GET', 'POST'])

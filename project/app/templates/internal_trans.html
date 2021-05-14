@@ -80,7 +80,7 @@
 {% endblock %}
 {% block content%}
 <div class="container">
-    <form method="POST">
+    <form method="POST" id="internal">
         <br/>
         <div class="container"><h3>Internal Transfer</h3></div>
         <br>
@@ -135,4 +135,36 @@
     </form>
 
 </div>
+<script>
+   var form = document.getElementById('internal')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var source1 = document.getElementById('source').value
+       var destination1 = document.getElementById('destination').value
+       var money1 = document.getElementById('money').value
+
+       fetch("http://127.0.0.1:5000/internal_trans", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               source: source1,
+               destination: destination1,
+               money: money1,
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
 {%endblock%}
