@@ -18,7 +18,6 @@ def internal_trans():
         money = float(req.get('money'))
         if money <= 0:
             flash('Invalid money amount!', category='error')
-            # return render_template('internal_trans.html', user=current_user)
             return make_response(render_template('internal_trans.html', user=current_user), 400)
         source = req.get('source')
         destination = req.get('destination')
@@ -26,31 +25,25 @@ def internal_trans():
         if error == 'no source':
             flash('You do not have a ' + source + ' account yet, not able to issue transaction!',
                   category='error')
-            # return render_template('internal_trans.html', user=current_user)
             return make_response(render_template('internal_trans.html', user=current_user), 400)
 
         elif error == 'no target':
             flash('You do not have a ' + destination + ' account yet, not able to issue transaction!',
                   category='error')
-            # return render_template('internal_trans.html', user=current_user)
             return make_response(render_template('internal_trans.html', user=current_user), 400)
 
         elif error == 'same account':
             flash('Can not transfer between same accounts!', category='error')
-            # return render_template('internal_trans.html', user=current_user)
             return make_response(render_template(url_for('views.home')), 400)
         else:
             if money > current_user.accounts[source_idx].balance:
                 flash('You do not have enough money!', category='error')
                 return make_response(redirect(url_for('views.home')), 400)
-                # return render_template('internal_trans.html', user=current_user)
             transaction_generator(current_user.accounts[source_idx],
                                   current_user.accounts[destination_idx], money, 'Internal transfer', 'internal')
             flash('Successfully issued an internal money transfer!', category='success')
             return make_response(redirect(url_for('views.home')), 200)
-            # return render_template('internal_trans.html', user=current_user)
     return make_response(render_template('internal_trans.html', user=current_user), 200)
-    # return render_template('internal_trans.html', user=current_user)
 
 
 @transaction.route('/re_internal', methods=['GET', 'POST'])
@@ -97,7 +90,7 @@ def re_internal():
 def wire():
     if request.method == 'POST':
         if not request.is_json:
-            return make_response({'msg': "no json"}), 200
+            return make_response({'msg': "no json"}, 200)
         req = request.get_json()
         money = float(req.get('money'))
         if money <= 0:
