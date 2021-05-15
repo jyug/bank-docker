@@ -25,7 +25,10 @@ https://github.com/gopinathsjsu/team-project-team-13/blob/main/Sprint%20Task%20S
 
 
 ## UI wireframes
-![architecture](UIwireframe.png "UI wireframes")
+![UI wireframes](UIwireframe.png "UI wireframes")
+
+## Burndown Chart
+![burndown](burndown.png "Burndown chart")
 
 
 ## Weekly Scrum Report
