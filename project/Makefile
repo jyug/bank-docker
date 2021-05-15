@@ -20,7 +20,7 @@ network:
 	$(HIDE)$(MAKE) network
 
 build:
-	$(HIDE)docker build -f Dockerfile -t $(DOCKER_IMAGE) $(PWD)
+	$(HIDE)docker build -f Dockerfile -t $(DOCKER_IMAGE) /home/ubuntu/bank-docker/project
 	$(HIDE)$(MAKE) install
 
 install:
