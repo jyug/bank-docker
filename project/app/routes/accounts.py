@@ -14,6 +14,7 @@ def checking():
             checking_idx = i
     if checking_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='check')
+    # transaction list that will be displayed at checking page
     transactions = []
     transaction_list(transactions, current_user.accounts[checking_idx], 'checking')
     income, outcome = monthly_cash_flow(current_user.accounts[checking_idx])
@@ -40,6 +41,7 @@ def saving():
             saving_idx = i
     if saving_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='save')
+    # transaction list that will be displayed at saving page
     transactions = []
     transaction_list(transactions, current_user.accounts[saving_idx], 'saving')
     income, outcome = monthly_cash_flow(current_user.accounts[saving_idx])
@@ -66,6 +68,7 @@ def credit():
             credit_idx = i
     if credit_idx == -1:
         return render_template('account.html', user=current_user, account=None, records=None, flag='credit')
+    # transaction list that will be displayed at credit page
     transactions = []
     transaction_list(transactions, current_user.accounts[credit_idx], 'credit')
     income, outcome = monthly_cash_flow(current_user.accounts[credit_idx])
