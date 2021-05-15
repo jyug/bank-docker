@@ -22,8 +22,9 @@
     </div>
     <br>
     <div class="container">
-        <form method="POST" action="/re_cancel">
+        <form method="POST" action="/re_cancel" id="cancel">
             {% for j in jobs %}
+
             <input type="radio" id={{j}} name="cancel" value={{j[0]}}>
             <label for={{j}}>{{j[1]}}</label><br>
             {% endfor %}
@@ -35,4 +36,7 @@
 
 
 </div>
+
+
+
 {%endblock%}

@@ -23,8 +23,7 @@ def login():
             if password == user.password:
                 flash('Welcome back ' + user.first_name + '!', category='success')
                 login_user(user, remember=True)
-                return make_response(jsonify({'msg': 'correct'})), 302
-                # return redirect(url_for('views.home'))
+                return make_response(jsonify({'msg': 'correct'}), 302)
             else:
                 flash('Invalid password, please try again!', category='error')
                 return make_response(jsonify({'msg': 'invalid password'}), 409)
