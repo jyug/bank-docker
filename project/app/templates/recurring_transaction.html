@@ -23,16 +23,10 @@
             </table>
         </div>
         <div class="container">
-            <form action="/recurring" id>
                 <p>What would you like to do?</p>
-                <input type="radio" id="internal" name="method" value="internal">
-                <label for="internal">Recurring Internal Transfer</label><br>
-                <input type="radio" id="wire" name="method" value="wire">
-                <label for="wire">Recurring Wire Transfer</label><br>
-                <input type="radio" id="cancel" name="method" value="cancel">
-                <label for="cancel">Cancel ongoing recurring task</label><br>
-                <button type="submit" class="btn btn-primary">Confirm</button>
-            </form>
+                <a id="internal" href="/re_internal">Recurring Internal Transfer</a><br/>
+                <a id="wire" href="/re_wire">Recurring Wire Transfer</a><br/>
+                <a id="cancel" href="/re_cancel">Cancel Ongoing Recurring Task</a><br/>
             <br/>
         </div>
     </form>
