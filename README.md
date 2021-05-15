@@ -31,6 +31,14 @@ https://github.com/gopinathsjsu/team-project-team-13/blob/main/Sprint%20Task%20S
 ![burndown](burndown.png "Burndown chart")
 
 
+## XP Core Values
+## Communication
+*Team members kept communication throughout the whole project*    
+*Keeping weekly meeting communication at least 2 times per week*  
+*Communication on comparing frameworks, sharing learning technologies, designing for projects and deploying*  
+*Communication to solve issues*  
+
+
 ## Weekly Scrum Report
 ### Team 13, Sprint #1
 Scurm Manager: Xuan Shi  
@@ -267,10 +275,3 @@ Communication on recurring transaction developing, jsonfy and deployment.
 - What am I planning to work on next?  
 > Testing  
 
-
-## XP Core Values
-## Communication
-*Team members kept communication throughout the whole project*    
-*Keeping weekly meeting communication at least 2 times per week*  
-*Communication on comparing frameworks, sharing learning technologies, designing for projects and deploying*  
-*Communication to solve issues*  
