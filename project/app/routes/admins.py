@@ -8,6 +8,11 @@ admins = Blueprint('admin', __name__)
 @admins.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
+    return render_template('admin.html', user=current_user)
+
+@admins.route('/admin_search', methods=['GET', 'POST'])
+@login_required
+def admin_search():
     if request.method == 'POST':
         users = User.query.all()
         key = request.form.get('search')
@@ -32,5 +37,4 @@ def admin():
                     customers.append(user)
         if len(customers) == 0:
             found = 0
-        return render_template('admin.html', user=current_user, customers=customers, found=found)
-    return render_template('admin.html', user=current_user)
+    return render_template('admin_search.html', user=current_user, customers=customers, found=found)
