@@ -3,9 +3,13 @@ Team 13
 ## Names of each team member: 
 Jinfan Zhang, Cong Li, Xuan Shi
 ## Summary of areas of contributions:
-Jinfan Zhang:
-Cong Li:
-Xuan Shi:
+
+Frontend Application design, implementation - Jinfan Zhang , Xuan Shi.
+
+Backend Application design, implementation - Jinfan Zhang, Cong Li.
+
+Deployment, testing  - Jinfan Zhang, Cong Li, Xuan Shi
+
 ## Link to your team's GitHub Repo
 https://github.com/gopinathsjsu/team-project-team-13
 ## Link to your team's Project Board (on GitHub)
