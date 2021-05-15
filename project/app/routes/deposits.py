@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, make_response, jsonify
 from flask_login import login_required
 from project.app import db
 from project.app.functions.functions import *
@@ -21,10 +21,17 @@ def deposit_info():
 @login_required
 def deposit():
     if request.method == 'POST':
-        money = float(request.form.get('money'))
-        account_type = request.form.get('account')
-        method = request.form.get('method')
-        customer_id = int(request.form.get('customer_id'))
+        if not request.is_json:
+            return make_response({'msg': "no json"}, 200)
+        req = request.get_json()
+        money = float(req.get('money'))
+        account_type = req.get('account')
+        method = req.get('method')
+        customer_id = int(req.get('customer_id'))
+        # money = float(request.form.get('money'))
+        # account_type = request.form.get('account')
+        # method = request.form.get('method')
+        # customer_id = int(request.form.get('customer_id'))
         customer = User.query.get(customer_id)
         for account in customer.accounts:
             if account.type == account_type:
@@ -39,6 +46,8 @@ def deposit():
                 db.session.commit()
                 flash('$' + str(money) + 'has been added to ' + customer.first_name + ' '
                       + customer.last_name + 's ' + account_type + ' account!', category='success')
-                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+                # return render_template('admin.html', user=current_user, customers=[customer], found=1)
+                return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1),200)
         flash('This customer does not have ' + account_type + ' yet!', category='error')
-        return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        # return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1), 400)
