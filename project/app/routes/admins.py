@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from project.model.models import User
+from model.models import User
 from flask_login import current_user, login_required
 
 admins = Blueprint('admin', __name__)

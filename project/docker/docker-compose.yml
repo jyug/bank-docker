@@ -1,0 +1,26 @@
+version: '2.1'
+services:
+  bank:
+    # depends_on:
+    #   - migrations
+    ports:
+      - 9201:5000
+    networks:
+      - default
+    container_name: ${DOCKER_CONTAINER}
+    image: ${DOCKER_IMAGE}
+    volumes:
+      - ${PWD}:/src
+      - ${DOCKER_CONTAINER}-venv:/venv
+    stdin_open: true
+    tty: true
+    command: python main.py
+
+volumes:
+  bank-venv:
+    name: ${DOCKER_CONTAINER}-venv
+
+networks:
+  default:
+    external:
+      name: ${NETWORK}

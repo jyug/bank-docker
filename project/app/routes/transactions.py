@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response, jsonify
 from flask_login import login_required
-from project.app import db
-from project.app.functions.functions import *
-from project.model.models import Transaction
-from project.app import scheduler
+from app import db
+from app.functions.functions import *
+from model.models import Transaction
+from app import scheduler
 
 transaction = Blueprint('transaction', __name__)
 

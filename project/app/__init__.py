@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
@@ -11,6 +12,8 @@ DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:cmpe202bank@bankdb.cing882ce6yu.us-west-1.rds.amazonaws' \
                                             '.com:3306/bank'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -35,7 +38,7 @@ def create_app():
     app.register_blueprint(accounts, url_prefix='/')
     app.register_blueprint(transaction, url_prefix='/')
 
-    from project.model.models import User
+    from model.models import User
 
     #create_database(app)
 

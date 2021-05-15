@@ -81,7 +81,7 @@
 
 
 
-       fetch("http://127.0.0.1:5000/sign-up", {
+       fetch("http://127.0.0.1/sign-up", {
            method: 'POST',
            body: JSON.stringify({
                username:username1,
@@ -97,7 +97,7 @@
            }
        })
        .then(function(response){
-           var url = "http://127.0.0.1:5000/"
+           var url = "http://127.0.0.1/"
            window.location = url
            console.log(response)
        })

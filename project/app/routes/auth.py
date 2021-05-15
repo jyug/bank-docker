@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response, jsonify
 from flask_login import login_user, logout_user, login_required
-from project.app import db
-from project.app.functions.functions import *
+from app import db
+from app.functions.functions import *
 
 
 auth = Blueprint('auth', __name__)

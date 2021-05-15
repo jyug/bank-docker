@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash, make_response, jsonify, redirect, url_for
 from flask_login import login_required
-from project.app import db
-from project.app.functions.functions import *
-from project.model.models import Transaction
+from app import db
+from app.functions.functions import *
+from model.models import Transaction
 
 deposits = Blueprint('deposits', __name__)
 

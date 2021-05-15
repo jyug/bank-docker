@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 
-from project.app.functions.functions import *
+from app.functions.functions import *
 
 views = Blueprint('views', __name__)
 

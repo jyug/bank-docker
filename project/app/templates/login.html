@@ -34,7 +34,7 @@
        e.preventDefault()
        var log = document.getElementById('loginpass').value
        var pass = document.getElementById('password').value
-       fetch("http://127.0.0.1:5000/login", {
+       fetch("http://127.0.0.1/login", {
            method: 'POST',
            body: JSON.stringify({
                loginpass:log,
@@ -45,7 +45,7 @@
            }
        })
        .then(function(response){
-           var url = "http://127.0.0.1:5000/"
+           var url = "http://127.0.0.1/"
            window.location = url
            console.log(response)
        })

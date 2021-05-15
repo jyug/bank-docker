@@ -1,0 +1,20 @@
+version: "3"
+services: 
+  proxy:
+    image: nginx:latest
+    container_name: ${DOCKER_CONTAINER}
+    networks:
+      - default
+    ports:
+      - 80:80
+    restart: always
+    # env_file:
+    #   - ${PWD}/docker/dev-env.rc
+    tty: true
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf:ro
+
+networks:
+  default:
+    external:
+      name: ${NETWORK}

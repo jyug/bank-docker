@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, request, flash, make_response, jso
 from flask_login import login_required
 
 
-from project.app import db
-from project.app.functions.functions import *
+from app import db
+from app.functions.functions import *
 
 manage = Blueprint('manage', __name__)
 

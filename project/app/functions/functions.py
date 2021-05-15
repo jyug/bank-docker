@@ -1,5 +1,5 @@
 from random import randint
-from project.model.models import User, Account
+from model.models import User, Account
 import datetime
 import re
 from flask_login import current_user
