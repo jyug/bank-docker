@@ -78,7 +78,7 @@
             var credit1 = true;
        }
 
-       fetch("http://127.0.0.1/close_account", {
+       fetch("http://13.56.14.69/close_account", {
            method: 'POST',
            body: JSON.stringify({
                 checking: checking1,
@@ -92,7 +92,7 @@
            }
        })
        .then(function(response){
-           var url = "http://127.0.0.1/"
+           var url = "http://13.56.14.69/"
            window.location = url
            console.log(response)
        })
