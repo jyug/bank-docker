@@ -29,6 +29,10 @@ install:
 start: .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up --no-recreate $(DOCKER_CONTAINER)
 
+stop: 
+	$(HIDE)docker stop $(DOCKER_CONTAINER)
+	$(HIDE)docker container rm $(DOCKER_CONTAINER)
+
 daemon: .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up -d --no-recreate $(DOCKER_CONTAINER)
 

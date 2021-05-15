@@ -22,5 +22,9 @@ pull:
 start: pull .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up $(DOCKER_CONTAINER)
 
+stop: 
+	$(HIDE)docker stop $(DOCKER_CONTAINER)
+	$(HIDE)docker container rm $(DOCKER_CONTAINER)
+
 daemon: pull .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up -d $(DOCKER_CONTAINER)
