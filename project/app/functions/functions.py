@@ -48,44 +48,90 @@ def transaction_list(transactions, account, flag):
     time = datetime.datetime.now().replace(microsecond=0)
     # According to Google, 18 months is 547.501 days, so we take 547 days as the time difference boundary
     eighteen_months = datetime.timedelta(days=547)
-    for p in account.payments:
-        try:
-            target = User.query.get(Account.query.get(p.target_id).user_id)
-            t_type = Account.query.get(p.target_id).type
-        except AttributeError:
-            continue
-
-        payment_time_diff = time - p.time.replace(microsecond=0)
-        if eighteen_months > payment_time_diff:
-            if target.id == current_user.id:
-                notation = 'Internal transaction to: ' + str(t_type)
-            else:
-                if p.type == 'deposit':
-                    notation = 'Deposit to: ' + str(target.first_name) + ' ' + str(target.last_name)
+    if flag == 'home':
+        iteration_pay = 0
+        iteration_income = 0
+        for p in reversed(account.payments):
+            try:
+                target = User.query.get(Account.query.get(p.target_id).user_id)
+                t_type = Account.query.get(p.target_id).type
+            except AttributeError:
+                continue
+            iteration_pay += 1
+            if iteration_pay == 5:
+                break
+            payment_time_diff = time - p.time.replace(microsecond=0)
+            if eighteen_months > payment_time_diff:
+                if target.id == current_user.id:
+                    notation = 'Internal transaction to: ' + str(t_type)
                 else:
-                    notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
-            transactions.append((p, notation, '-', t_type, p.type, p.description))
-        else:
-            pass
-    for i in account.incomes:
-        try:
-            source = User.query.get(Account.query.get(i.source_id).user_id)
-            s_type = Account.query.get(i.source_id).type
-        except AttributeError:
-            continue
-
-        income_time_diff = time - i.time.replace(microsecond=0)
-        if eighteen_months > income_time_diff:
-            if source.id == current_user.id:
-                notation = 'Internal transaction from: ' + str(s_type)
+                    if p.type == 'deposit':
+                        notation = 'Deposit to: ' + str(target.first_name) + ' ' + str(target.last_name)
+                    else:
+                        notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
+                transactions.append((p, notation, '-', t_type, p.type, p.description))
             else:
-                if i.type == 'deposit':
-                    notation = 'Deposit'
+                pass
+        for i in reversed(account.incomes):
+            try:
+                source = User.query.get(Account.query.get(i.source_id).user_id)
+                s_type = Account.query.get(i.source_id).type
+            except AttributeError:
+                continue
+            iteration_income += 1
+            if iteration_income == 5:
+                break
+            income_time_diff = time - i.time.replace(microsecond=0)
+            if eighteen_months > income_time_diff:
+                if source.id == current_user.id:
+                    notation = 'Internal transaction from: ' + str(s_type)
                 else:
-                    notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
-            transactions.append((i, notation, '+', s_type, i.type, i.description))
-        else:
-            pass
+                    if i.type == 'deposit':
+                        notation = 'Deposit'
+                    else:
+                        notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
+                transactions.append((i, notation, '+', s_type, i.type, i.description))
+            else:
+                pass
+    else:
+        for p in account.payments:
+            try:
+                target = User.query.get(Account.query.get(p.target_id).user_id)
+                t_type = Account.query.get(p.target_id).type
+            except AttributeError:
+                continue
+
+            payment_time_diff = time - p.time.replace(microsecond=0)
+            if eighteen_months > payment_time_diff:
+                if target.id == current_user.id:
+                    notation = 'Internal transaction to: ' + str(t_type)
+                else:
+                    if p.type == 'deposit':
+                        notation = 'Deposit to: ' + str(target.first_name) + ' ' + str(target.last_name)
+                    else:
+                        notation = 'Payment to: ' + str(target.first_name) + ' ' + str(target.last_name)
+                transactions.append((p, notation, '-', t_type, p.type, p.description))
+            else:
+                pass
+        for i in account.incomes:
+            try:
+                source = User.query.get(Account.query.get(i.source_id).user_id)
+                s_type = Account.query.get(i.source_id).type
+            except AttributeError:
+                continue
+
+            income_time_diff = time - i.time.replace(microsecond=0)
+            if eighteen_months > income_time_diff:
+                if source.id == current_user.id:
+                    notation = 'Internal transaction from: ' + str(s_type)
+                else:
+                    if i.type == 'deposit':
+                        notation = 'Deposit'
+                    else:
+                        notation = 'Income from: ' + str(source.first_name) + ' ' + str(source.last_name)
+                transactions.append((i, notation, '+', s_type, i.type, i.description))
+            else:
+                pass
     transactions.sort(reverse=True, key=transaction_sort)
 
 
