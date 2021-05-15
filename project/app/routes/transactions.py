@@ -85,7 +85,7 @@ def re_internal():
                 recurring_execution(current_user.accounts[source_idx].id, current_user.accounts[destination_idx].id,
                                     money, 'Recurring internal transfer', period, date_arr)
                 flash('Successfully issued an internal money transfer!', category='success')
-                return render_template('internal_trans.html', user=current_user)
+                return redirect(url_for('views.home'))
     return render_template('re_internal.html', user=current_user)
 
 
@@ -180,27 +180,20 @@ def re_wire():
 @transaction.route('/recurring', methods=['GET', 'POST'])
 @login_required
 def recurring_transfer():
-    if request.method == 'POST':
-        method = request.form.get('method')
-        if method == 'internal':
-            return render_template('re_internal.html', user=current_user)
-        elif method == 'wire':
-            return render_template('re_wire.html', user=current_user)
-        else:
-            jobs = scheduler.get_jobs()  # get all the running recurring jobs
-            jobs_id = [(job.id, job.name) for job in jobs]  # list the job ids for selection value
-            return render_template('re_cancel.html', user=current_user, jobs=jobs_id)
     return render_template('recurring_transaction.html', user=current_user)
 
 
 @transaction.route('/re_cancel', methods=['GET', 'POST'])
 @login_required
 def re_cancel():
+    jobs = scheduler.get_jobs()
+    jobs_id = [(job.id, job.name) for job in jobs]
     if request.method == 'POST':
         job_id = request.form.get('cancel')
         scheduler.delete_job(job_id)  # delete the selected recurring job
         flash('Job deleted!', category='success')
         return redirect(url_for('views.home'))
+    return render_template('re_cancel.html', user=current_user, jobs=jobs_id)
 
 
 def recurring_execution(src_id, tgt_id, money, description, period, date_arr):

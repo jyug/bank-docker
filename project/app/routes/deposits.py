@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, make_response, jsonify
+from flask import Blueprint, render_template, request, flash, make_response, jsonify, redirect, url_for
 from flask_login import login_required
 from project.app import db
 from project.app.functions.functions import *
@@ -47,7 +47,7 @@ def deposit():
                 flash('$' + str(money) + 'has been added to ' + customer.first_name + ' '
                       + customer.last_name + 's ' + account_type + ' account!', category='success')
                 # return render_template('admin.html', user=current_user, customers=[customer], found=1)
-                return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1),200)
+                return make_response(redirect(url_for('views.home')), 200)
         flash('This customer does not have ' + account_type + ' yet!', category='error')
         # return render_template('admin.html', user=current_user, customers=[customer], found=1)
         return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1), 400)
