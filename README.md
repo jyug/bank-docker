@@ -19,6 +19,16 @@ https://github.com/gopinathsjsu/team-project-team-13/blob/main/weekly%20scrum%20
 ## Link to your team's Google Sprint Task Sheet
 https://github.com/gopinathsjsu/team-project-team-13/blob/main/Sprint%20Task%20Sheet%20%2B%20burndown_team13.xlsx
 
+
+## Architecture Diagram
+![architecture](architecture.png "Architecture diagram")
+
+
+## UI wireframes
+![architecture](UIwireframe.png "UI wireframes")
+
+
+## Weekly Scrum Report
 ### Team 13, Sprint #1
 Scurm Manager: Xuan Shi  
 Communication on frontend & backend technologies  
