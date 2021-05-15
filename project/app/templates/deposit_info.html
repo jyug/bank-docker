@@ -5,7 +5,7 @@
     <br/>
     <h2 style="font-weight: bold">Accounts for {{customer.first_name}} {{customer.last_name}}</h2>
     <br/>
-    <form method="POST" action="/deposit">
+    <form method="POST" action="/deposit" id="deposite">
         <div class="form-group">
             <label for="money">Money Amount: </label>
             <input
@@ -27,9 +27,43 @@
             <option value="check">Check</option>
             <option value="cash">Cash</option>
         </select>
-        <input type="hidden" name="customer_id" value={{customer.id}}>
+        <input type="hidden" name="customer_id" id='custID'value={{customer.id}}>
         <button type="submit" class="btn btn-primary">Deposit money</button>
     </form>
 
 </div>
+
+<script>
+   var form = document.getElementById('deposite')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var money1 = document.getElementById('money').value
+       var account1 = document.getElementById('account').value
+       var method1 = document.getElementById('method').value
+       var customerID = document.getElementById('custID').value
+
+       fetch("http://127.0.0.1:5000/deposit", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               money: money1,
+               account: account1,
+               method: method1,
+               customer_id: customerID
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/admin"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
 {% endblock %}
