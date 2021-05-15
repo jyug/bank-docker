@@ -29,6 +29,9 @@ install:
 start: .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up --no-recreate $(DOCKER_CONTAINER)
 
+daemon: .deps
+	$(HIDE)docker-compose -f docker/docker-compose.yml up -d --no-recreate $(DOCKER_CONTAINER)
+
 mysql: .deps
 	$(HIDE)docker-compose -f docker/docker-compose.yml up -d --no-recreate mysql
 	-$(HIDE)./docker/wait-for-it.sh mysql
