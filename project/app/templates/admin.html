@@ -5,7 +5,7 @@
     <br/>
     <h3>Administration Section</h3>
     <br/>
-    <form class="search" method="POST" action="/admin">
+    <form class="search" method="POST" action="/admin_search">
         <label>Search the user you wanna check: </label>
         <input type="text" name="search">
         <select id="filter" name="field">
@@ -16,60 +16,6 @@
         </select>
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
-    <div class="container">
-        {% if found == 0 %}
-        <p style="font-weight:bold">No such user!</p>
-        {% else %}
-        {% for c in customers %}
-        <tr>
-            <p style="font-weight:bold">Matched User: </p>
-            <td><span class="col1">First name: </span><span>{{c.first_name}}</span></td>
-            </br>
-            <td><span class="col1">Last name: </span><span>{{c.last_name}}</span></td>
-            </br>
-            <td><span class="col1">Email: </span><span>{{c.email}}</span></td>
-            </br>
-            <td><span class="col1">Username: </span><span>{{c.username}}</span></td>
-            </br>
-            <td><span class="col1">Address: </span><span>{{c.address}}</span></td>
-            </br>
-            {% if c.accounts|length == 0 %}
-            <td><span class="col1">Accounts: </span><span>N/A</span></td>
-            {% else %}
-            {% for account in c.accounts %}
-            <td><span class="col1">{{account.type}} account number: </span><span>{{account.number}}</span></td>
-            <br/>
-            <td><span class="col1">{{account.type}} account balance: </span><span>${{account.balance}}</span></td>
-            <br/>
-            {% endfor %}
-            {% endif %}
-            </br>
 
-            <form method="POST" action="/account_management">
-                <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
-            </form>
-            <br/>
-            <form method="POST" action="/deposit_info">
-                <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Deposit money</button>
-            </form>
-
-            <br/>
-            <p style="font-weight:bold">Close account for user</p>
-            <form method="POST" action="/close_account">
-                <input type="checkbox" id="checking" name="checking" value="checking">
-                <label for="checking"> Checking Account</label><br>
-                <input type="checkbox" id="saving" name="saving" value="saving">
-                <label for="saving"> Saving Account </label><br>
-                <input type="checkbox" id="credit" name="credit" value="credit">
-                <label for="credit"> Credit Account </label><br><br>
-                <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Close account</button>
-            </form>
-            </br>
-        </tr>
-        </br>
-        {% endfor %}
-        {% endif %}
-    </div>
-    </form>
 </div>
 {% endblock %}
