@@ -20,7 +20,7 @@ network:
 	$(HIDE)$(MAKE) network
 
 build:
-	$(HIDE)docker build --build-arg GITHUB_TOKEN=$(GITHUB_TOKEN) -f Dockerfile -t $(DOCKER_IMAGE) $(PWD)
+	$(HIDE)docker build -f Dockerfile -t $(DOCKER_IMAGE) $(PWD)
 	$(HIDE)$(MAKE) install
 
 install:
