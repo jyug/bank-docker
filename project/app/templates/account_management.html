@@ -5,7 +5,7 @@
     <br/>
     <h2 style="font-weight: bold">Accounts for {{customer.first_name}} {{customer.last_name}}</h2>
     <br/>
-    <form method="POST" action="/open_account">
+    <form method="POST" action="/open_account" id="open">
         <div class="form-group">
             <label for="balance">Initial Balance/Credit</label>
             <input
@@ -20,9 +20,41 @@
             <option value="saving">Saving Account</option>
             <option value="credit">Credit Account</option>
         </select>
-        <input type="hidden" name="customer_id" value={{customer.id}}>
+        <input type="hidden" name="customer_id" id="customerID" value={{customer.id}}>
         <button type="submit" class="btn btn-primary">Open account</button>
     </form>
 
 </div>
+
+<script>
+   var form = document.getElementById('open')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var balance1 = document.getElementById('balance').value
+       var type1 = document.getElementById('type').value
+       var customerID = document.getElementById('customerID').value
+
+       fetch("http://127.0.0.1:5000/open_account", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               balance: balance1,
+               type: type1,
+               customer_id: customerID
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/admin"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
 {% endblock %}

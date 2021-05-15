@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, make_response, jsonify
 from flask_login import login_required
 from project.app import db
 from project.app.functions.functions import *
@@ -20,24 +20,35 @@ def account_management():
 @login_required
 def open_account():
     if request.method == 'POST':
-        balance = request.form.get('balance')
-        account_type = request.form.get('type')
-        customer_id = int(request.form.get('customer_id'))
+        if not request.is_json:
+            return make_response({'msg': "no json"}, 200)
+        req = request.get_json()
+        balance = req.get('balance')
+        account_type = req.get('type')
+        customer_id = req.get('customer_id')
+
+        # balance = request.form.get('balance')
+        # account_type = request.form.get('type')
+        # customer_id = int(request.form.get('customer_id'))
+
         customer = User.query.get(customer_id)
         for account in customer.accounts:
             if account.type == account_type:
                 flash('For ' + customer.first_name + ' ' + customer.last_name + ', ' + account.type + ' account exists '
                                                                                                       'already!',
                       category='error')
-                return render_template('admin.html', user=current_user, customers=[customer], found=1)
+                # return render_template('admin.html', user=current_user, customers=[customer], found=1)
+                return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1), 400)
         new_account = Account(type=account_type, balance=balance,
                               number=account_number_generator(customer, account_type))
         db.session.add(new_account)
         customer.accounts.append(new_account)
         db.session.commit()
         flash('Account opened for ' + customer.first_name + ' ' + customer.last_name + '!', category='success')
-        return render_template('admin.html', user=current_user, customers=[customer], found=1)
-    return render_template('admin.html', user=current_user)
+        # return render_template('admin.html', user=current_user, customers=[customer], found=1)
+        return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1), 200)
+    # return render_template('admin.html', user=current_user)
+    return make_response(render_template('admin.html', user=current_user), 200)
 
 
 @manage.route('/close_account', methods=['GET', 'POST'])
