@@ -34,20 +34,20 @@
             <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Open account</button>
         </form>
         <br/>
-        <form method="POST" action="/deposit_info">
-            <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Deposit money</button>
+        <form method="POST" action="/deposit_info" id="deposit">
+            <button name="id" type="submit"  id="user" class="btn btn-primary" value={{c.id}}>Deposit money</button>
         </form>
 
         <br/>
         <p style="font-weight:bold">Close account for user</p>
-        <form method="POST" action="/close_account">
+        <form method="POST" action="/close_account" id="close">
             <input type="checkbox" id="checking" name="checking" value="checking">
             <label for="checking"> Checking Account</label><br>
             <input type="checkbox" id="saving" name="saving" value="saving">
             <label for="saving"> Saving Account </label><br>
             <input type="checkbox" id="credit" name="credit" value="credit">
             <label for="credit"> Credit Account </label><br><br>
-            <button name="id" type="submit" class="btn btn-primary" value={{c.id}}>Close account</button>
+            <button name="id" type="submit" class="btn btn-primary" id="cus" value={{c.id}}>Close account</button>
 
         </form>
         </br>
@@ -58,5 +58,51 @@
     {% endif %}
 
 </div>
+
+<script>
+   var form = document.getElementById('close')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+
+       var customerID1 = document.getElementById('cus').value
+
+       if(document.getElementById("checking").checked){
+            var checking1 = true;
+       }
+
+       if(document.getElementById("saving").checked){
+            var saving1 = true;
+       }
+
+       if(document.getElementById("credit").checked){
+            var credit1 = true;
+       }
+
+       fetch("http://127.0.0.1:5000/close_account", {
+           method: 'POST',
+           body: JSON.stringify({
+                checking: checking1,
+                saving: saving1,
+                credit: credit1,
+                id: customerID1
+
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
+
 
 {% endblock %}

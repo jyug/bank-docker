@@ -5,9 +5,9 @@
     <br/>
     <h3>Administration Section</h3>
     <br/>
-    <form class="search" method="POST" action="/admin_search">
+    <form class="search" method="POST" id="search" action="/admin_search">
         <label>Search the user you wanna check: </label>
-        <input type="text" name="search">
+        <input type="text" name="search" id="input">
         <select id="filter" name="field">
             <option value="firstName">First name</option>
             <option value="lastName">Last name</option>
@@ -18,4 +18,5 @@
     </form>
 
 </div>
+
 {% endblock %}

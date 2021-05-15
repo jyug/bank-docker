@@ -10,6 +10,7 @@ admins = Blueprint('admin', __name__)
 def admin():
     return render_template('admin.html', user=current_user)
 
+
 @admins.route('/admin_search', methods=['GET', 'POST'])
 @login_required
 def admin_search():

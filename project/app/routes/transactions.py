@@ -18,7 +18,7 @@ def internal_trans():
         money = float(req.get('money'))
         if money <= 0:  # check invalid money input
             flash('Invalid money amount!', category='error')
-            return make_response(render_template('internal_trans.html', user=current_user), 400)
+            return make_response(redirect(url_for('views.home')), 400)
         source = req.get('source')
         destination = req.get('destination')
         source_idx, destination_idx, error = internal_validation(source, destination,
@@ -26,16 +26,16 @@ def internal_trans():
         if error == 'no source':  # check whether the user have the source account
             flash('You do not have a ' + source + ' account yet, not able to issue transaction!',
                   category='error')
-            return make_response(render_template('internal_trans.html', user=current_user), 400)
+            return make_response(redirect(url_for('views.home')), 400)
 
         elif error == 'no target':  # check whether the user have the target account
             flash('You do not have a ' + destination + ' account yet, not able to issue transaction!',
                   category='error')
-            return make_response(render_template('internal_trans.html', user=current_user), 400)
+            return make_response(redirect(url_for('views.home')), 400)
 
         elif error == 'same account':  # check whether the user transfer between same accounts
             flash('Can not transfer between same accounts!', category='error')
-            return make_response(render_template(url_for('views.home')), 400)
+            return make_response(redirect(url_for('views.home')), 400)
         else:
             if money > current_user.accounts[source_idx].balance:  # check whether user have enough money
                 flash('You do not have enough money!', category='error')
@@ -52,41 +52,44 @@ def internal_trans():
 @login_required
 def re_internal():
     if request.method == 'POST':
-        date = request.form.get('date')
+        if not request.is_json:
+            return make_response({'msg': "no json"}), 200
+        req = request.get_json()
+        date = req.get('date')
         if not date:
             flash('Please select the start date!', category='error')
-            return render_template('re_wire.html', user=current_user)
-        money = float(request.form.get('money'))
+            return make_response(redirect(url_for('views.home')), 400)
+        money = float(req.get('money'))
         if money <= 0:  # check invalid money input
             flash('Invalid money amount!', category='error')
-            return render_template('re_internal.html', user=current_user)
-        source = request.form.get('source')
-        destination = request.form.get('destination')
-        period = request.form.get('period')
+            return make_response(redirect(url_for('views.home')),400)
+        source = req.get('source')
+        destination = req.get('destination')
+        period = req.get('period')
         date_arr = date.split('-')
         source_idx, destination_idx, error = internal_validation(source, destination,
                                                                  current_user)  # accounts validation
         if error == 'no source':  # check whether the user have the source account
             flash('You do not have a ' + source + ' account yet, not able to issue transaction!',
                   category='error')
-            return render_template('re_internal.html', user=current_user)
+            return make_response(redirect(url_for('views.home')),400)
         elif error == 'no target':  # check whether the user have the target account
             flash('You do not have a ' + destination + ' account yet, not able to issue transaction!',
                   category='error')
-            return render_template('re_internal.html', user=current_user)
+            return make_response(redirect(url_for('views.home')),400)
         elif error == 'same account':  # check whether the user transfer between same accounts
             flash('Can not transfer between same accounts!', category='error')
-            return render_template('re_internal.html', user=current_user)
+            return make_response(redirect(url_for('views.home')),400)
         else:
             if money > current_user.accounts[source_idx].balance:  # check whether user have enough money
                 flash('You do not have enough money!', category='error')
-                return render_template('re_internal.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 400)
             else:  # proceed the recurring internal transaction
                 recurring_execution(current_user.accounts[source_idx].id, current_user.accounts[destination_idx].id,
                                     money, 'Recurring internal transfer', period, date_arr)
                 flash('Successfully issued an internal money transfer!', category='success')
-                return redirect(url_for('views.home'))
-    return render_template('re_internal.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 200)
+    return make_response(render_template('re_internal.html', user=current_user), 200)
 
 
 @transaction.route('/wire', methods=['GET', 'POST'])
@@ -99,7 +102,7 @@ def wire():
         money = float(req.get('money'))
         if money <= 0:  # check invalid money input
             flash('Invalid money amount!', category='error')
-            return make_response(render_template('wire.html', user=current_user), 400)
+            return make_response(redirect(url_for('views.home')), 400)
         name = req.get('name')
         email = req.get('email')
         note = req.get('note')
@@ -112,7 +115,7 @@ def wire():
         account, flag = target_account(email, firstName, lastName)
         if flag == 'no email':  # check whether target email can be found in db
             flash('Email not found! No such user!', category='error')
-            return make_response(render_template('wire.html', user=current_user), 400)
+            return make_response(redirect(url_for('views.home')), 400)
         elif flag == 'wrong name':  # check whether the input name match the record
             flash('Incorrect name! Not able to issue the wire transfer!', category='error')
             return make_response(redirect(url_for('views.home')), 400)
@@ -135,46 +138,50 @@ def wire():
 @login_required
 def re_wire():
     if request.method == 'POST':
-        date = request.form.get('date')
+        if not request.is_json:
+            return make_response({'msg': "no json"}), 200
+        req = request.get_json()
+        date = req.get('date')
+        # date = request.form.get('date')
         if not date:
             flash('Please select the start date!', category='error')
-            return render_template('re_wire.html', user=current_user)
-        money = float(request.form.get('money'))
+            return make_response(redirect(url_for('views.home')), 400)
+        money = float(req.get('money'))
         if money <= 0:  # check invalid money input
             flash('Invalid money amount!', category='error')
-            return render_template('re_wire.html', user=current_user)
-        name = request.form.get('name')
+            return make_response(redirect(url_for('views.home')), 400)
+        name = req.get('name')
+        email = req.get('email')
+        description = req.get('note')
+        method = req.get('method')
+        period = req.get('period')
         firstName, lastName = name_splitter(name)
-        email = request.form.get('email')
-        description = request.form.get('note')
-        method = request.form.get('method')
-        period = request.form.get('period')
         date_arr = date.split('-')
         source_idx = source_index(current_user, method)  # accounts validation
         if source_idx not in [0, 1, 2]:  # check whether the user have the source account
             flash('You do not have a ' + method + " account yet, please contact the bank to open!", category='error')
-            return redirect(url_for('views.home'))
+            return make_response(redirect(url_for('views.home')), 400)
         account, flag = target_account(email, firstName, lastName)
         if flag == 'no email':  # check whether target email can be found in db
             flash('Email not found! No such user!', category='error')
-            return render_template('re_wire.html', user=current_user)
+            return make_response(redirect(url_for('views.home')), 400)
         elif flag == 'wrong name':  # check whether the input name match the record
             flash('Incorrect name! Not able to issue the wire transfer!', category='error')
-            return render_template('re_wire.html', user=current_user)
+            return make_response(redirect(url_for('views.home')), 400)
         elif not account:  # check whether the target account exists
             flash('The target user do not have a checking account yet, unable to issue the transfer!',
                   category='error')
-            return redirect(url_for('views.home'))
+            return make_response(redirect(url_for('views.home')), 400)
         else:
             if money > current_user.accounts[source_idx].balance:  # check whether user have enough money
                 flash('You do not have enough money!', category='error')
-                return render_template('re_wire.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 400)
             else:  # proceed the recurring wire transaction
                 recurring_execution(current_user.accounts[source_idx].id, account.id,
                                     money, description, period, date_arr)
                 flash('Recurring wire transfer set!', category='success')
-                return redirect(url_for('views.home'))
-    return render_template('re_wire.html', user=current_user)
+                return make_response(redirect(url_for('views.home')), 400)
+    return make_response(render_template('re_wire.html', user=current_user), 400)
 
 
 @transaction.route('/recurring', methods=['GET', 'POST'])

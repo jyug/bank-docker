@@ -22,7 +22,7 @@
         </table>
     </div>
     <div class="container">
-        <form method="POST" action="/re_wire">
+        <form method="POST" action="/re_wire" id="rewire">
             <label>Name: </label>
             <input
                     type="text"
@@ -80,4 +80,44 @@
         <button onclick="location.href='/recurring'" class="btn btn-primary">Back</button>
     </div>
 </div>
+
+<script>
+   var form = document.getElementById('rewire')
+   form.addEventListener('submit',function(e){
+       e.preventDefault()
+       var name1 = document.getElementById('name').value
+       var email1 = document.getElementById('email').value
+       var note1 = document.getElementById('note').value
+       var money1 = document.getElementById('money').value
+       var period1 = document.getElementById('period').value
+       var date1 = document.getElementById('date').value
+
+       fetch("http://127.0.0.1:5000/re_wire", {
+           method: 'POST',
+           body: JSON.stringify({
+
+               name: name1,
+               email: email1,
+               money: money1,
+               period: period1,
+               note: note1,
+               date: date1
+
+           }),
+           headers:{
+               "Content-Type":"application/json; charset=UTF-8"
+           }
+       })
+       .then(function(response){
+           var url = "http://127.0.0.1:5000/"
+           window.location = url
+           console.log(response)
+       })
+       .then(function(data){
+           console.log("hll")
+           console.log(data)
+       })
+   })
+</script>
+
 {%endblock%}

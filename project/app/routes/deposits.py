@@ -28,10 +28,6 @@ def deposit():
         account_type = req.get('account')
         method = req.get('method')
         customer_id = int(req.get('customer_id'))
-        # money = float(request.form.get('money'))
-        # account_type = request.form.get('account')
-        # method = request.form.get('method')
-        # customer_id = int(request.form.get('customer_id'))
         customer = User.query.get(customer_id)
         for account in customer.accounts:
             if account.type == account_type:
@@ -46,8 +42,6 @@ def deposit():
                 db.session.commit()
                 flash('$' + str(money) + 'has been added to ' + customer.first_name + ' '
                       + customer.last_name + 's ' + account_type + ' account!', category='success')
-                # return render_template('admin.html', user=current_user, customers=[customer], found=1)
                 return make_response(redirect(url_for('views.home')), 200)
         flash('This customer does not have ' + account_type + ' yet!', category='error')
-        # return render_template('admin.html', user=current_user, customers=[customer], found=1)
-        return make_response(render_template('admin.html', user=current_user, customers=[customer], found=1), 400)
+        return make_response(redirect(url_for('views.home')), 400)
